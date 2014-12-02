@@ -21,6 +21,14 @@ class Visual
 
 class Frame
 {
+public:
+    
+    const std::string getName() const
+    {
+        return name;
+    };
+    
+private:
     ///Name of the frame
     std::string name;
     
@@ -36,24 +44,43 @@ class Frame
 
 class Sensor
 {
+private:
     std::string name;
     std::string type;
+
+    std::string taskInstanceName;
 
     Frame *attachmentPoint;
 };
 
 class Transformation
 {
+public:
+    
+    Transformation(Frame *sourceFrame, Frame *targetFrame);
+
+    const Frame &getSourceFrame() const
+    {
+        return *sourceFrame;
+    }
+    
+    const Frame &getTargetFrame() const
+    {
+        return *targetFrame;
+    }
+
+private:
+    
     /**
      * Name of the Transformation, defaults to
      * "<sourceFrameName>2<TargetFrameName>"
      * */
-    
     std::string name;
     
     Frame *sourceFrame;
     Frame *targetFrame;
-    
+};
+
 class StaticTransformation : public Transformation
 {
 public:
@@ -131,6 +158,8 @@ class TranslationalJoint : public Joint
 class Robot
 {
 public:
+    
+    
     Robot();
     
     void loadFromSmurf(const std::string &path);
