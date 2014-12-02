@@ -54,6 +54,9 @@ class Transformation
     Frame *sourceFrame;
     Frame *targetFrame;
     
+class StaticTransformation : public Transformation
+{
+public:
     /**
      * Transformation from the source frame
      * to the target frame.
@@ -61,11 +64,39 @@ class Transformation
     Eigen::Affine3d sourceToTarget;
 };
 
-class Joint : public Transformation
+class DynamicTransformation : public Transformation
+{
+    const std::string &getProviderName() const
+    {
+        return providerName;
+    };
+    
+    const std::string &getProviderPortName() const
+    {
+        return providerPortName;
+    }
+    
+private:
+    /**
+     * Name of the task instance that provides the
+     * dynamic transformation
+     * */
+    std::string providerName;
+    
+    /**
+     * Name of the port on the task instance, that
+     * provides the transformation.
+     * */
+    std::string providerPortName;
+};
+
+class Joint : public DynamicTransformation
 {
     /**
      * Name of the rock task that provides 
      * the driver for this joint.
+     * 
+     * e.g. "servo_dynamixel::Task"
      * */
     std::string driverName;
     
@@ -73,6 +104,12 @@ class Joint : public Transformation
      * Physical limits of the joint.
      * */
     base::JointLimitRange limits;
+    
+    /**
+     * Transformation from the source frame
+     * to the joint axis.
+     * */
+    Eigen::Affine3d sourceToAxis;
 };
 
 class RotationalJoint : public Joint
@@ -98,11 +135,22 @@ public:
     
     void loadFromSmurf(const std::string &path);
     
+    const std::vector<StaticTransformation *> & getStaticTransforms() const
+    {
+        return staticTransforms;
+    };
+    
+    const std::vector<DynamicTransformation *> getDynamicTransforms() const
+    {
+        return dynamicTransforms;
+    }
+    
+private:
     Frame rootFrame;
     
     std::vector<Frame> availableFrames;
-    
-    std::vector<Transformation *> staticTransforms;
+    std::vector<StaticTransformation *> staticTransforms;
+    std::vector<DynamicTransformation *> dynamicTransforms;
     std::vector<Joint *> joints;
     std::vector<Sensor> sensors;
 };
