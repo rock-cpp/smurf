@@ -93,6 +93,7 @@ public:
 
 class DynamicTransformation : public Transformation
 {
+public:
     const std::string &getProviderName() const
     {
         return providerName;
@@ -169,12 +170,12 @@ public:
         return staticTransforms;
     };
     
-    const std::vector<DynamicTransformation *> getDynamicTransforms() const
+    const std::vector<DynamicTransformation *> & getDynamicTransforms() const
     {
         return dynamicTransforms;
     }
     
-private:
+protected:
     Frame rootFrame;
     
     std::vector<Frame> availableFrames;
