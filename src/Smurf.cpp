@@ -1,5 +1,37 @@
 #include "Smurf.hpp"
 
+smurf::Frame::Frame(const std::string& name): name(name)
+{
+
+}
+
+
+smurf::StaticTransformation::StaticTransformation(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const Eigen::Affine3d& sourceToTarget): 
+    Transformation(sourceFrame, targetFrame), sourceToTarget(sourceToTarget)
+{
+
+}
+
+smurf::StaticTransformation::StaticTransformation(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const Eigen::Quaterniond& rotation, const Eigen::Vector3d& translation): 
+    Transformation(sourceFrame, targetFrame)
+{
+    sourceToTarget.setIdentity();
+    sourceToTarget.rotate(rotation);
+    sourceToTarget.translation() = translation;
+}
+
+const Eigen::Affine3d& smurf::StaticTransformation::getTransformation() const
+{
+    return sourceToTarget;
+}
+
+smurf::DynamicTransformation::DynamicTransformation(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const std::string& provider, const std::string& port): 
+    Transformation(sourceFrame, targetFrame), providerName(provider), providerPortName(port)
+{
+
+}
+
+
 smurf::Robot::Robot()
 {
 

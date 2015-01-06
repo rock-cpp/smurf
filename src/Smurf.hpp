@@ -22,7 +22,8 @@ class Visual
 class Frame
 {
 public:
-    
+    Frame(const std::string &name);
+
     const std::string getName() const
     {
         return name;
@@ -84,6 +85,12 @@ private:
 class StaticTransformation : public Transformation
 {
 public:
+    StaticTransformation(Frame* sourceFrame, Frame* targetFrame, const Eigen::Affine3d &sourceToTarget);
+    StaticTransformation(Frame* sourceFrame, Frame* targetFrame, const Eigen::Quaterniond &rotation, const Eigen::Vector3d &translation);
+    
+    
+    const Eigen::Affine3d &getTransformation() const;
+private:
     /**
      * Transformation from the source frame
      * to the target frame.
@@ -94,6 +101,8 @@ public:
 class DynamicTransformation : public Transformation
 {
 public:
+    DynamicTransformation(Frame* sourceFrame, Frame* targetFrame, const std::string &provider, const std::string &port);
+    
     const std::string &getProviderName() const
     {
         return providerName;
@@ -176,9 +185,9 @@ public:
     }
     
 protected:
-    Frame rootFrame;
+    Frame *rootFrame;
     
-    std::vector<Frame> availableFrames;
+    std::vector<Frame *> availableFrames;
     std::vector<StaticTransformation *> staticTransforms;
     std::vector<DynamicTransformation *> dynamicTransforms;
     std::vector<Joint *> joints;
