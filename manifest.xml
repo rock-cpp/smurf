@@ -8,5 +8,6 @@
   <logo>http://</logo>
   <depend package="base/cmake" />
   <depend package="base/types" />
+  <depend package="simulation/smurf_parser" />
 
 </package>
