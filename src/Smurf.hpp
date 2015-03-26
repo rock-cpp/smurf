@@ -6,7 +6,7 @@
 #include <base/JointState.hpp>
 #include <base/JointTransform.hpp>
 #include <base/samples/RigidBodyState.hpp>
-
+#include <urdf_model/model.h>
 
 namespace smurf
 {
@@ -45,6 +45,8 @@ private:
 
 class Sensor
 {
+public:
+    Sensor(const std::string &name, const std::string &type, const std::string &taskInstanceName, Frame *inFrame);
 private:
     std::string name;
     std::string type;
@@ -70,6 +72,11 @@ public:
         return *targetFrame;
     }
 
+    const std::string &getName() const
+    {
+        return name;
+    }
+    
 private:
     
     /**
@@ -101,7 +108,7 @@ private:
 class DynamicTransformation : public Transformation
 {
 public:
-    DynamicTransformation(Frame* sourceFrame, Frame* targetFrame, const std::string &provider, const std::string &port);
+    DynamicTransformation(Frame *sourceFrame, Frame *targetFrame, const std::string &provider, const std::string &port);
     
     const std::string &getProviderName() const
     {
@@ -129,6 +136,8 @@ private:
 
 class Joint : public DynamicTransformation
 {
+protected:
+    Joint(Frame* sourceFrame, Frame* targetFrame, const std::string &provider, const std::string &port, const std::string &driverName, base::JointLimitRange &limits, const Eigen::Affine3d &sourceToAxis);
     /**
      * Name of the rock task that provides 
      * the driver for this joint.
@@ -151,6 +160,8 @@ class Joint : public DynamicTransformation
 
 class RotationalJoint : public Joint
 {
+public:
+    RotationalJoint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis,  const Eigen::Vector3d &rotationAxis);
     /**
      * Rotation axis of the joint in the target frame.
      * */
@@ -159,6 +170,8 @@ class RotationalJoint : public Joint
 
 class TranslationalJoint : public Joint
 {
+public:
+    TranslationalJoint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Vector3d &translationAxis);;
     /**
      * Sliding axis of the joint in the target frame.
      * */
@@ -185,13 +198,17 @@ public:
     }
     
 protected:
-    Frame *rootFrame;
     
+    Frame *getFrameByName(const std::string &name);
+    
+    Frame *rootFrame;
+    boost::shared_ptr<urdf::ModelInterface> model;
+
     std::vector<Frame *> availableFrames;
     std::vector<StaticTransformation *> staticTransforms;
     std::vector<DynamicTransformation *> dynamicTransforms;
     std::vector<Joint *> joints;
-    std::vector<Sensor> sensors;
+    std::vector<Sensor *> sensors;
 };
 
 };
