@@ -162,6 +162,7 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
             }
             break;
             case urdf::Joint::REVOLUTE:
+            case urdf::Joint::CONTINUOUS:
             case urdf::Joint::PRISMATIC:
             {
                 base::JointState minState;
@@ -181,7 +182,7 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
                 Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
                 Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
                 DynamicTransformation *transform = NULL;
-                if(joint->type == urdf::Joint::REVOLUTE)
+                if(joint->type == urdf::Joint::REVOLUTE || joint->type == urdf::Joint::CONTINUOUS)
                 {
                     transform = new RotationalJoint(source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis);
                 }
