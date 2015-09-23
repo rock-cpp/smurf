@@ -90,7 +90,6 @@ std::string checkGet(configmaps::ConfigMap &map, const std::string &key)
     auto it = map.find(key);
     if(it == map.end())
     {
-        return std::string();
         throw std::runtime_error("Smurf:: Error, could not find key " + key + " in config map");
     }
     
