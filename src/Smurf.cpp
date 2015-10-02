@@ -17,6 +17,11 @@ smurf::Joint::Joint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const 
 
 }
 
+const Eigen::Affine3d& smurf::Joint::getAxisTransformation() const
+{
+    return sourceToAxis;
+}
+
 
 smurf::RotationalJoint::RotationalJoint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, 
                                         const std::string& provider, const std::string& port, 
@@ -182,16 +187,21 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
                 Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
                 Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
                 DynamicTransformation *transform = NULL;
+                Joint *smurfJoint;
                 if(joint->type == urdf::Joint::REVOLUTE || joint->type == urdf::Joint::CONTINUOUS)
                 {
                     transform = new RotationalJoint(source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis);
+                    smurfJoint = (Joint *)transform;
                 }
                 else
                 {
                     transform = new TranslationalJoint(source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis);
+                    smurfJoint = (Joint *)transform;
                 }
                 std::cout << "Dynamic Transformation " << transform->getName() << std::endl;
+                std::cout << "Prismatic Joint " << transform->getName() << std::endl;
                 dynamicTransforms.push_back(transform);
+                joints.push_back(smurfJoint);
             }
             break;
             default:
