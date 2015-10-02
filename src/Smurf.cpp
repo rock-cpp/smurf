@@ -164,6 +164,14 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
                 DynamicTransformation *transform = new DynamicTransformation(source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"));
                 std::cout << "Dynamic Transformation " << transform->getName() << std::endl;
                 dynamicTransforms.push_back(transform);
+                std::cout << "Floating Joint " << transform->getName() << std::endl;
+                // For these ones we need a task, but the initial position should be in the model anyway...
+                Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
+                Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
+                sourceToAxis.translation() = axis;
+                base::JointLimitRange limits;
+                Joint *smurfJoint = new Joint (source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis); 
+                joints.push_back(smurfJoint);
             }
             break;
             case urdf::Joint::REVOLUTE:

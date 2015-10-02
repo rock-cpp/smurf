@@ -138,8 +138,11 @@ class Joint : public DynamicTransformation
 {
     public:
         const Eigen::Affine3d &getAxisTransformation() const;
+
+        Joint(Frame* sourceFrame, Frame* targetFrame, const std::string &provider, const std::string &port, const std::string &driverName, base::JointLimitRange &limits, const Eigen::Affine3d &sourceToAxis);
+
 protected:
-    Joint(Frame* sourceFrame, Frame* targetFrame, const std::string &provider, const std::string &port, const std::string &driverName, base::JointLimitRange &limits, const Eigen::Affine3d &sourceToAxis);
+
     /**
      * Name of the rock task that provides 
      * the driver for this joint.
