@@ -97,6 +97,7 @@ public:
     
     
     const Eigen::Affine3d &getTransformation() const;
+
 private:
     /**
      * Transformation from the source frame
@@ -118,7 +119,7 @@ public:
     const std::string &getProviderPortName() const
     {
         return providerPortName;
-    }
+    };
     
 private:
     /**
@@ -137,9 +138,13 @@ private:
 class Joint : public DynamicTransformation
 {
     public:
+
+        Joint(Frame* sourceFrame, Frame* targetFrame, const std::string &provider, const std::string &port, const std::string &driverName, base::JointLimitRange &limits, const Eigen::Affine3d &sourceToAxis);
+
         const Eigen::Affine3d &getAxisTransformation() const;
+
 protected:
-    Joint(Frame* sourceFrame, Frame* targetFrame, const std::string &provider, const std::string &port, const std::string &driverName, base::JointLimitRange &limits, const Eigen::Affine3d &sourceToAxis);
+
     /**
      * Name of the rock task that provides 
      * the driver for this joint.
@@ -197,17 +202,18 @@ public:
     const std::vector<DynamicTransformation *> & getDynamicTransforms() const
     {
         return dynamicTransforms;
-    }
+    };
 
     const std::vector<Joint *> & getJoints() const
     {
         return joints;
-    }
+    };
 
     const std::vector<Sensor *> & getSensors() const
     {
         return sensors;
-    }
+    };
+
     
 protected:
     
