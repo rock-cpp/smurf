@@ -20,8 +20,7 @@ smurf::Joint::Joint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const 
 const Eigen::Affine3d& smurf::Joint::getAxisTransformation() const
 {
     return sourceToAxis;
-}
-
+};
 
 smurf::RotationalJoint::RotationalJoint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, 
                                         const std::string& provider, const std::string& port, 
@@ -145,33 +144,29 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
             }
         }
         
+        //Add all transformations as static (as initial state)
+        const urdf::Pose &tr(joint->parent_to_joint_origin_transform);
+        
+        StaticTransformation *transform = new StaticTransformation(source, target,
+                                                    Eigen::Quaterniond(tr.rotation.w, tr.rotation.x, tr.rotation.y, tr.rotation.z),
+                                                    Eigen::Vector3d(tr.position.x, tr.position.y, tr.position.z));
+        
+        std::cout << "Static Transformation " << transform->getName() << std::endl;
+        staticTransforms.push_back(transform);
+
         switch(joint->type)
         {
             case urdf::Joint::FIXED:
             {
-                const urdf::Pose &tr(joint->parent_to_joint_origin_transform);
-                
-                StaticTransformation *transform = new StaticTransformation(source, target,
-                                                            Eigen::Quaterniond(tr.rotation.w, tr.rotation.x, tr.rotation.y, tr.rotation.z),
-                                                            Eigen::Vector3d(tr.position.x, tr.position.y, tr.position.z));
-                
-                std::cout << "Static Transformation " << transform->getName() << std::endl;
-                staticTransforms.push_back(transform);
             }
             break;
             case urdf::Joint::FLOATING:
             {
                 DynamicTransformation *transform = new DynamicTransformation(source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"));
-                std::cout << "Dynamic Transformation " << transform->getName() << std::endl;
                 dynamicTransforms.push_back(transform);
-                std::cout << "Floating Joint " << transform->getName() << std::endl;
-                // For these ones we need a task, but the initial position should be in the model anyway...
                 Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
                 Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
                 sourceToAxis.translation() = axis;
-                base::JointLimitRange limits;
-                Joint *smurfJoint = new Joint (source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis); 
-                joints.push_back(smurfJoint);
             }
             break;
             case urdf::Joint::REVOLUTE:
@@ -195,21 +190,15 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
                 Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
                 Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
                 DynamicTransformation *transform = NULL;
-                Joint *smurfJoint;
                 if(joint->type == urdf::Joint::REVOLUTE || joint->type == urdf::Joint::CONTINUOUS)
                 {
                     transform = new RotationalJoint(source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis);
-                    smurfJoint = (Joint *)transform;
                 }
                 else
                 {
                     transform = new TranslationalJoint(source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis);
-                    smurfJoint = (Joint *)transform;
                 }
-                std::cout << "Dynamic Transformation " << transform->getName() << std::endl;
-                std::cout << "Prismatic Joint " << transform->getName() << std::endl;
                 dynamicTransforms.push_back(transform);
-                joints.push_back(smurfJoint);
             }
             break;
             default:
