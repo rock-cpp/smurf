@@ -214,6 +214,10 @@ public:
         return sensors;
     };
 
+    const std::vector<Frame *> & getFrames() const
+    {
+        return availableFrames;
+    };
     
 protected:
     
