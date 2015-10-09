@@ -28,6 +28,12 @@ public:
     {
         return name;
     };
+
+    void getCollisionObjects(std::vector<smurf::Collidable> &CollisionObjects);
+    std::vector<Collidable> &getCollisionObjects();
+
+    void getVisuals(std::vector<smurf::Visual> & Visuals);
+    std::vector<smurf::Visual> &getVisuals();
     
 private:
     ///Name of the frame
