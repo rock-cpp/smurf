@@ -222,4 +222,27 @@ smurf::Transformation::Transformation(smurf::Frame* sourceFrame, smurf::Frame* t
 }
 
 
+void smurf::Frame::getCollisionObjects(std::vector<smurf::Collidable> &CollisionObjects)
+{
 
+//    std::vector<Collidable> collisionObjects;
+
+//    ///Visuals that can be displayed inside the frame
+//    std::vector<Visual> visuals;
+
+    CollisionObjects=this->collisionObjects;
+}
+std::vector<smurf::Collidable> &smurf::Frame::getCollisionObjects()
+{
+    return this->collisionObjects;
+}
+
+void smurf::Frame::getVisuals(std::vector<smurf::Visual> & Visuals)
+{
+     Visuals=this->visuals;
+}
+
+std::vector<smurf::Visual> &smurf::Frame::getVisuals()
+{
+    return this->visuals;
+}
