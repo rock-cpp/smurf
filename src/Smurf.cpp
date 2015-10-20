@@ -41,9 +41,38 @@ smurf::TranslationalJoint::TranslationalJoint(smurf::Frame* sourceFrame, smurf::
 
 }
 
-smurf::Sensor::Sensor(const std::string& name, const std::string& type, const std::string& taskInstanceName, smurf::Frame* inFrame)
+smurf::Sensor::Sensor()
 {
 
+
+}
+
+smurf::Sensor::Sensor(const std::string &name, const std::string &type, const std::string &taskInstanceName, Frame *inFrame)
+{
+    this->name=name;
+    this->type=type;
+    this->taskInstanceName=taskInstanceName;
+    this->attachmentPoint=inFrame;
+}
+
+std::string smurf::Sensor::getname()
+{
+    return this->name;
+}
+
+std::string smurf::Sensor::gettype()
+{
+    return this->type;
+}
+
+smurf::Frame * smurf::Sensor::getattachmentPoint()
+{
+    return this->attachmentPoint;
+}
+
+std::string smurf::Sensor::gettaskInstanceName()
+{
+    return this->taskInstanceName;
 }
 
 
@@ -224,12 +253,6 @@ smurf::Transformation::Transformation(smurf::Frame* sourceFrame, smurf::Frame* t
 
 void smurf::Frame::getCollisionObjects(std::vector<smurf::Collidable> &CollisionObjects)
 {
-
-//    std::vector<Collidable> collisionObjects;
-
-//    ///Visuals that can be displayed inside the frame
-//    std::vector<Visual> visuals;
-
     CollisionObjects=this->collisionObjects;
 }
 std::vector<smurf::Collidable> &smurf::Frame::getCollisionObjects()
