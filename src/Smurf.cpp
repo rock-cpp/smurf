@@ -8,6 +8,12 @@ smurf::Frame::Frame(const std::string& name): name(name)
 
 }
 
+smurf::Frame::Frame()
+{
+
+}
+
+
 smurf::Joint::Joint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const std::string& provider, 
                     const std::string& port, const std::string& driverName, base::JointLimitRange& limits, 
                     const Eigen::Affine3d& sourceToAxis): 
@@ -81,6 +87,12 @@ smurf::StaticTransformation::StaticTransformation(smurf::Frame* sourceFrame, smu
 {
 
 }
+//smurf::StaticTransformation::StaticTransformation()
+//{
+
+//}
+
+
 
 smurf::StaticTransformation::StaticTransformation(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const Eigen::Quaterniond& rotation, const Eigen::Vector3d& translation): 
     Transformation(sourceFrame, targetFrame)
