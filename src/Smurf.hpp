@@ -23,6 +23,7 @@ class Frame
 {
 public:
     Frame(const std::string &name);
+    Frame();
 
     const std::string getName() const
     {
@@ -105,7 +106,7 @@ class StaticTransformation : public Transformation
 public:
     StaticTransformation(Frame* sourceFrame, Frame* targetFrame, const Eigen::Affine3d &sourceToTarget);
     StaticTransformation(Frame* sourceFrame, Frame* targetFrame, const Eigen::Quaterniond &rotation, const Eigen::Vector3d &translation);
-    
+    //StaticTransformation();
     
     const Eigen::Affine3d &getTransformation() const;
 

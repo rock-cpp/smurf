@@ -8,6 +8,12 @@ smurf::Frame::Frame(const std::string& name): name(name)
 
 }
 
+smurf::Frame::Frame()
+{
+
+}
+
+
 smurf::Joint::Joint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const std::string& provider, 
                     const std::string& port, const std::string& driverName, base::JointLimitRange& limits, 
                     const Eigen::Affine3d& sourceToAxis): 
@@ -81,6 +87,12 @@ smurf::StaticTransformation::StaticTransformation(smurf::Frame* sourceFrame, smu
 {
 
 }
+//smurf::StaticTransformation::StaticTransformation()
+//{
+
+//}
+
+
 
 smurf::StaticTransformation::StaticTransformation(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const Eigen::Quaterniond& rotation, const Eigen::Vector3d& translation): 
     Transformation(sourceFrame, targetFrame)
@@ -145,20 +157,20 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
 
         Frame *frame = new Frame(fr["name"]);
         availableFrames.push_back(frame);
-        std::cout << "Adding additional frame " << frame->getName() << std::endl;
+        //std::cout << "Adding additional frame " << frame->getName() << std::endl;
     }
     
     for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
     {
         Frame *frame = new Frame(link.first);
         availableFrames.push_back(frame);
-        std::cout << "Adding link frame " << frame->getName() << std::endl;
+        //std::cout << "Adding link frame " << frame->getName() << std::endl;
     }
 
     for(std::pair<std::string, boost::shared_ptr<urdf::Joint> > jointIt: model->joints_)
     {
         boost::shared_ptr<urdf::Joint> joint = jointIt.second;
-        std::cout << "Adding joint " << joint->name << std::endl;
+        //std::cout << "Adding joint " << joint->name << std::endl;
         
         Frame *source = getFrameByName(joint->parent_link_name);
         Frame *target = getFrameByName(joint->child_link_name);
@@ -180,7 +192,7 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
                                                     Eigen::Quaterniond(tr.rotation.w, tr.rotation.x, tr.rotation.y, tr.rotation.z),
                                                     Eigen::Vector3d(tr.position.x, tr.position.y, tr.position.z));
         
-        std::cout << "Static Transformation " << transform->getName() << std::endl;
+        //std::cout << "Static Transformation " << transform->getName() << std::endl;
         staticTransforms.push_back(transform);
 
         switch(joint->type)
