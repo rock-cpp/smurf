@@ -152,9 +152,15 @@ class Joint : public DynamicTransformation
     public:
 
         Joint(Frame* sourceFrame, Frame* targetFrame, const std::string &provider, const std::string &port, const std::string &driverName, base::JointLimitRange &limits, const Eigen::Affine3d &sourceToAxis);
+	
+	Joint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Affine3d& parentToJointOrigin); 
 
         const Eigen::Affine3d &getAxisTransformation() const;
-
+	
+	const Eigen::Affine3d &getParentToJointOrigin() const;
+	
+	void setParentToJointOrigin(const Eigen::Affine3d inParentToJointOrigin);
+	
 protected:
 
     /**
@@ -175,12 +181,19 @@ protected:
      * to the joint axis.
      * */
     Eigen::Affine3d sourceToAxis;
+    
+    Eigen::Affine3d parentToJointOrigin;
+    
+
 };
 
 class RotationalJoint : public Joint
 {
 public:
     RotationalJoint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis,  const Eigen::Vector3d &rotationAxis);
+    
+    RotationalJoint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Vector3d& rotationAxis, const Eigen::Affine3d& parentToJointOrigin); 
+
     /**
      * Rotation axis of the joint in the target frame.
      * */
@@ -190,7 +203,10 @@ public:
 class TranslationalJoint : public Joint
 {
 public:
-    TranslationalJoint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Vector3d &translationAxis);;
+    TranslationalJoint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Vector3d &translationAxis);
+    
+    TranslationalJoint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Vector3d& translationAxis, const Eigen::Affine3d& parentToJointOrigin);
+    
     /**
      * Sliding axis of the joint in the target frame.
      * */
