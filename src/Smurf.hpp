@@ -149,18 +149,24 @@ private:
 
 class Joint : public DynamicTransformation
 {
-    public:
+public:
+    
+    Joint(Frame* sourceFrame, Frame* targetFrame, const std::string &provider, const std::string &port, const std::string &driverName, base::JointLimitRange &limits, const Eigen::Affine3d &sourceToAxis);
+    
+    Joint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Affine3d& parentToJointOrigin); 
+    
+    Joint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Affine3d& parentToJointOrigin, boost::shared_ptr<urdf::Joint> jointModel); 
+    
+    const Eigen::Affine3d &getAxisTransformation() const;
+    
+    const Eigen::Affine3d &getParentToJointOrigin() const;
+    
+    void setParentToJointOrigin(const Eigen::Affine3d inParentToJointOrigin);
+    
+    boost::shared_ptr<urdf::Joint> getJointModel() const;
+    
 
-        Joint(Frame* sourceFrame, Frame* targetFrame, const std::string &provider, const std::string &port, const std::string &driverName, base::JointLimitRange &limits, const Eigen::Affine3d &sourceToAxis);
-	
-	Joint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Affine3d& parentToJointOrigin); 
-
-        const Eigen::Affine3d &getAxisTransformation() const;
-	
-	const Eigen::Affine3d &getParentToJointOrigin() const;
-	
-	void setParentToJointOrigin(const Eigen::Affine3d inParentToJointOrigin);
-	
+    
 protected:
 
     /**
@@ -184,6 +190,11 @@ protected:
     
     Eigen::Affine3d parentToJointOrigin;
     
+    /**
+     * Urdf data of the joint
+     * 
+     */
+    boost::shared_ptr<urdf::Joint> jointModel;
 
 };
 
@@ -192,7 +203,7 @@ class RotationalJoint : public Joint
 public:
     RotationalJoint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis,  const Eigen::Vector3d &rotationAxis);
     
-    RotationalJoint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Vector3d& rotationAxis, const Eigen::Affine3d& parentToJointOrigin); 
+    RotationalJoint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Vector3d& rotationAxis, const Eigen::Affine3d& parentToJointOrigin, boost::shared_ptr<urdf::Joint> jointModel); 
 
     /**
      * Rotation axis of the joint in the target frame.
@@ -205,7 +216,7 @@ class TranslationalJoint : public Joint
 public:
     TranslationalJoint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Vector3d &translationAxis);
     
-    TranslationalJoint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Vector3d& translationAxis, const Eigen::Affine3d& parentToJointOrigin);
+    TranslationalJoint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Vector3d& translationAxis, const Eigen::Affine3d& parentToJointOrigin, boost::shared_ptr<urdf::Joint> jointModel);
     
     /**
      * Sliding axis of the joint in the target frame.
@@ -245,6 +256,11 @@ public:
     const std::vector<Frame *> & getFrames() const
     {
         return availableFrames;
+    };
+    
+    const Frame* getRootFrame() const
+    {
+        return rootFrame;
     };
     
 protected:
