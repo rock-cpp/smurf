@@ -32,6 +32,17 @@ smurf::Joint::Joint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const 
 
 }
 
+smurf::Joint::Joint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const std::string& provider, 
+                    const std::string& port, const std::string& driverName, base::JointLimitRange& limits, 
+                    const Eigen::Affine3d& sourceToAxis, const Eigen::Affine3d& parentToJointOrigin,
+                    boost::shared_ptr<urdf::Joint> jointModel): 
+                    DynamicTransformation(sourceFrame, targetFrame, provider, port), limits(limits), 
+                    sourceToAxis(sourceToAxis), parentToJointOrigin(parentToJointOrigin),
+                    jointModel(jointModel)
+{
+
+}
+
 const Eigen::Affine3d& smurf::Joint::getAxisTransformation() const
 {
     return this -> sourceToAxis;
@@ -42,46 +53,42 @@ const Eigen::Affine3d& smurf::Joint::getParentToJointOrigin() const
     return this -> parentToJointOrigin;
 };
 
+boost::shared_ptr<urdf::Joint> smurf::Joint::getJointModel() const
+{
+    return this -> jointModel;
+};
+
 smurf::RotationalJoint::RotationalJoint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, 
                                         const std::string& provider, const std::string& port, 
                                         const std::string& driverName, base::JointLimitRange& limits, 
                                         const Eigen::Affine3d& sourceToAxis, const Eigen::Vector3d& rotationAxis): 
                                         Joint(sourceFrame, targetFrame, provider, port, driverName, limits, sourceToAxis), 
-                                        rotationAxis(rotationAxis)
-{
-
-}
+                                        rotationAxis(rotationAxis){}
+                                        
+smurf::RotationalJoint::RotationalJoint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, 
+                                        const std::string& provider, const std::string& port, 
+                                        const std::string& driverName, base::JointLimitRange& limits, 
+                                        const Eigen::Affine3d& sourceToAxis, const Eigen::Vector3d& rotationAxis, 
+                                        const Eigen::Affine3d& parentToJointOrigin, boost::shared_ptr<urdf::Joint> jointModel): 
+                                        Joint(sourceFrame, targetFrame, provider, port, driverName, limits, sourceToAxis, parentToJointOrigin, jointModel), 
+                                        rotationAxis(rotationAxis){}
 
 smurf::TranslationalJoint::TranslationalJoint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const std::string& provider, 
                                               const std::string& port, const std::string& driverName, base::JointLimitRange& limits, 
                                               const Eigen::Affine3d& sourceToAxis, const Eigen::Vector3d& translationAxis): 
                                               Joint(sourceFrame, targetFrame, provider, port, driverName, limits, sourceToAxis), 
-                                              translationAxis(translationAxis)
-{
-
-}
-
-smurf::RotationalJoint::RotationalJoint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, 
-                                        const std::string& provider, const std::string& port, 
-                                        const std::string& driverName, base::JointLimitRange& limits, 
-                                        const Eigen::Affine3d& sourceToAxis, const Eigen::Vector3d& rotationAxis, 
-					const Eigen::Affine3d& parentToJointOrigin): 
-                                        Joint(sourceFrame, targetFrame, provider, port, driverName, limits, sourceToAxis, parentToJointOrigin), 
-                                        rotationAxis(rotationAxis)
-{
-
-}
-
+                                              translationAxis(translationAxis){}
+                                              
 smurf::TranslationalJoint::TranslationalJoint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const std::string& provider, 
                                               const std::string& port, const std::string& driverName, base::JointLimitRange& limits, 
                                               const Eigen::Affine3d& sourceToAxis, const Eigen::Vector3d& translationAxis, 
-					      const Eigen::Affine3d& parentToJointOrigin): 
-                                              Joint(sourceFrame, targetFrame, provider, port, driverName, limits, sourceToAxis, parentToJointOrigin), 
+                                              const Eigen::Affine3d& parentToJointOrigin, boost::shared_ptr<urdf::Joint> jointModel): 
+                                              Joint(sourceFrame, targetFrame, provider, port, driverName, limits, sourceToAxis, parentToJointOrigin, jointModel), 
                                               translationAxis(translationAxis)
-{
-
-}
-
+                                              {
+                                                  
+                                                                                            }
+                                                                                            
 smurf::Sensor::Sensor()
 {
 
@@ -219,31 +226,15 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
                 annotations = cv.children;
             }
         }
-        
-        /*
-        //Add all transformations as static (as initial state)
-        const urdf::Pose &tr(joint->parent_to_joint_origin_transform);
-        
-        StaticTransformation *transform = new StaticTransformation(source, target,
-                                                    Eigen::Quaterniond(tr.rotation.w, tr.rotation.x, tr.rotation.y, tr.rotation.z),
-                                                    Eigen::Vector3d(tr.position.x, tr.position.y, tr.position.z));
-        
-        //std::cout << "Static Transformation " << transform->getName() << std::endl;
-        staticTransforms.push_back(transform);
-	*/
-	
         switch(joint->type)
         {
             case urdf::Joint::FIXED:
             {
-		const urdf::Pose &tr(joint->parent_to_joint_origin_transform);
-        
-		StaticTransformation *transform = new StaticTransformation(source, target,
-                                                    Eigen::Quaterniond(tr.rotation.w, tr.rotation.x, tr.rotation.y, tr.rotation.z),
-                                                    Eigen::Vector3d(tr.position.x, tr.position.y, tr.position.z));
-        
-		 //std::cout << "Static Transformation " << transform->getName() << std::endl;
-		 staticTransforms.push_back(transform);
+                const urdf::Pose &tr(joint->parent_to_joint_origin_transform);     
+                StaticTransformation *transform = new StaticTransformation(source, target,
+                                                                           Eigen::Quaterniond(tr.rotation.w, tr.rotation.x, tr.rotation.y, tr.rotation.z),
+                                                                           Eigen::Vector3d(tr.position.x, tr.position.y, tr.position.z));              
+                staticTransforms.push_back(transform);
             }
             break;
             case urdf::Joint::FLOATING:
@@ -253,16 +244,16 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
                 Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
                 Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
                 sourceToAxis.translation() = axis;
-		base::JointLimitRange limits;
-		// push the correspondent smurf::joint 
-		const urdf::Pose parentToOrigin(joint->parent_to_joint_origin_transform);
-		Eigen::Quaterniond rot(parentToOrigin.rotation.w, parentToOrigin.rotation.x, parentToOrigin.rotation.y, parentToOrigin.rotation.z);
-		Eigen::Vector3d trans(parentToOrigin.position.x, parentToOrigin.position.y, parentToOrigin.position.z);
-		Eigen::Affine3d parentToOriginAff;
-		parentToOriginAff.setIdentity();
-		parentToOriginAff.rotate(rot);
-		parentToOriginAff.translation() = trans;
-                Joint *smurfJoint = new Joint (source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, parentToOriginAff); 
+                base::JointLimitRange limits;
+                // push the correspondent smurf::joint 
+                const urdf::Pose parentToOrigin(joint->parent_to_joint_origin_transform);
+                Eigen::Quaterniond rot(parentToOrigin.rotation.w, parentToOrigin.rotation.x, parentToOrigin.rotation.y, parentToOrigin.rotation.z);
+                Eigen::Vector3d trans(parentToOrigin.position.x, parentToOrigin.position.y, parentToOrigin.position.z);
+                Eigen::Affine3d parentToOriginAff;
+                parentToOriginAff.setIdentity();
+                parentToOriginAff.rotate(rot);
+                parentToOriginAff.translation() = trans;
+                Joint *smurfJoint = new Joint (source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, parentToOriginAff, joint); 
                 joints.push_back(smurfJoint);
             }
             break;
@@ -279,32 +270,32 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
                 maxState.position = joint->limits->upper;
                 maxState.effort = joint->limits->effort;
                 maxState.speed = joint->limits->velocity;
-
+                
                 base::JointLimitRange limits;
                 limits.min = minState;
                 limits.max = maxState;
-
+                
                 Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
                 Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
                 DynamicTransformation *transform = NULL;
-		Joint *smurfJoint;
-		// push the correspondent smurf::joint 
-		const urdf::Pose parentToOrigin(joint->parent_to_joint_origin_transform);
-		Eigen::Quaterniond rot(parentToOrigin.rotation.w, parentToOrigin.rotation.x, parentToOrigin.rotation.y, parentToOrigin.rotation.z);
-		Eigen::Vector3d trans(parentToOrigin.position.x, parentToOrigin.position.y, parentToOrigin.position.z);
-		Eigen::Affine3d parentToOriginAff;
-		parentToOriginAff.setIdentity();
-		parentToOriginAff.rotate(rot);
-		parentToOriginAff.translation() = trans;
+                Joint *smurfJoint;
+                // push the correspondent smurf::joint 
+                const urdf::Pose parentToOrigin(joint->parent_to_joint_origin_transform);
+                Eigen::Quaterniond rot(parentToOrigin.rotation.w, parentToOrigin.rotation.x, parentToOrigin.rotation.y, parentToOrigin.rotation.z);
+                Eigen::Vector3d trans(parentToOrigin.position.x, parentToOrigin.position.y, parentToOrigin.position.z);
+                Eigen::Affine3d parentToOriginAff;
+                parentToOriginAff.setIdentity();
+                parentToOriginAff.rotate(rot);
+                parentToOriginAff.translation() = trans;
                 if(joint->type == urdf::Joint::REVOLUTE || joint->type == urdf::Joint::CONTINUOUS)
                 {
-                    transform = new RotationalJoint(source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff);
-		    smurfJoint = (Joint *)transform;
+                    transform = new RotationalJoint(source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
+                    smurfJoint = (Joint *)transform;
                 }
                 else
                 {
-                    transform = new TranslationalJoint(source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff);
-		    smurfJoint = (Joint *)transform;
+                    transform = new TranslationalJoint(source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
+                    smurfJoint = (Joint *)transform;
                 }
                 dynamicTransforms.push_back(transform);
                 joints.push_back(smurfJoint);
