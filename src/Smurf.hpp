@@ -15,13 +15,11 @@ class Collidable
 {
 };
 
-class Visual
-{
-};
 
 class Frame
 {
 public:
+    Frame(const std::string &name, const std::vector<urdf::Visual>& visuals);
     Frame(const std::string &name);
     Frame();
 
@@ -32,9 +30,11 @@ public:
 
     void getCollisionObjects(std::vector<smurf::Collidable> &CollisionObjects);
     std::vector<Collidable> &getCollisionObjects();
-
-    void getVisuals(std::vector<smurf::Visual> & Visuals);
-    std::vector<smurf::Visual> &getVisuals();
+    
+    void addVisual(const urdf::Visual& visual);
+    void setVisuals(const std::vector<urdf::Visual>& visuals);
+    void getVisuals(std::vector<urdf::Visual>& Visuals) const;
+    std::vector<urdf::Visual>& getVisuals();
     
 private:
     ///Name of the frame
@@ -44,7 +44,7 @@ private:
     std::vector<Collidable> collisionObjects;
     
     ///Visuals that can be displayed inside the frame
-    std::vector<Visual> visuals;
+    std::vector<urdf::Visual> visuals;
     
     ///TODO add additional data in map or whatever
     
