@@ -3,16 +3,21 @@
 #include <boost/filesystem.hpp>
 #include <configmaps/ConfigData.h>
 
+smurf::Frame::Frame(const std::string &name, const std::vector<urdf::Visual>& visuals) :
+    name(name), visuals(visuals)
+{
+  
+}
+
 smurf::Frame::Frame(const std::string& name): name(name)
 {
-
+  
 }
 
 smurf::Frame::Frame()
 {
-
+  
 }
-
 
 smurf::Joint::Joint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const std::string& provider, 
                     const std::string& port, const std::string& driverName, base::JointLimitRange& limits, 
@@ -205,7 +210,13 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
     for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
     {
         Frame *frame = new Frame(link.first);
+        for(boost::shared_ptr<urdf::Visual> visual : link.second->visual_array)
+        {
+            frame->addVisual(*visual);
+        }
         availableFrames.push_back(frame);
+        
+
         //std::cout << "Adding link frame " << frame->getName() << std::endl;
     }
 
@@ -331,12 +342,23 @@ std::vector<smurf::Collidable> &smurf::Frame::getCollisionObjects()
     return this->collisionObjects;
 }
 
-void smurf::Frame::getVisuals(std::vector<smurf::Visual> & Visuals)
+void smurf::Frame::setVisuals(const std::vector<urdf::Visual>& visuals)
+{
+    this->visuals = visuals;
+}
+
+void smurf::Frame::addVisual(const urdf::Visual& visual)
+{
+    visuals.push_back(visual);
+}
+
+
+void smurf::Frame::getVisuals(std::vector<urdf::Visual> & Visuals) const
 {
      Visuals=this->visuals;
 }
 
-std::vector<smurf::Visual> &smurf::Frame::getVisuals()
+std::vector<urdf::Visual> &smurf::Frame::getVisuals()
 {
     return this->visuals;
 }
