@@ -2,6 +2,7 @@
 #include <smurf_parser/SMURFParser.h>
 #include <boost/filesystem.hpp>
 #include <configmaps/ConfigData.h>
+#include <base/Logging.hpp>
 
 smurf::Frame::Frame(const std::string &name, const std::vector<urdf::Visual>& visuals) :
     name(name), visuals(visuals)
@@ -177,6 +178,21 @@ std::string checkGet(configmaps::ConfigMap &map, const std::string &key)
     return it->second;
 }
 
+
+/*
+ *  Each link in the map has collision data
+ * 
+ */
+void smurf::Robot::loadCollidables(boost::shared_ptr< urdf::ModelInterface > model, configmaps::ConfigMap map){
+    for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
+    {
+        LOG_DEBUG_S << "Found link =:-D  " << link.first;
+        smurf::Frame* frame = getFrameByName(link.first);
+        std::vector<boost::shared_ptr<urdf::Collision>> collision_vector = link.second -> collision_array;
+        frame->setCollidables(collision_vector);
+    }
+}
+
 void smurf::Robot::loadFromSmurf(const std::string& path)
 {
     configmaps::ConfigMap map;
@@ -329,6 +345,17 @@ void smurf::Frame::getCollisionObjects(std::vector<smurf::Collidable> &Collision
 std::vector<smurf::Collidable> &smurf::Frame::getCollisionObjects()
 {
     return this->collisionObjects;
+}
+
+std::vector< boost::shared_ptr< urdf::Collision >> smurf::Frame::getCollidables()
+{
+    
+    return this -> collisions;
+}
+
+void smurf::Frame::setCollidables(const std::vector< boost::shared_ptr< urdf::Collision > >& collisionVector)
+{
+    collisions = collisionVector;
 }
 
 void smurf::Frame::setVisuals(const std::vector<urdf::Visual>& visuals)
