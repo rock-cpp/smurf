@@ -48,7 +48,7 @@ smurf::Joint::Joint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const 
 
 }
 
-const Eigen::Affine3d& smurf::Joint::getAxisTransformation() const
+const Eigen::Affine3d& smurf::Joint::getSourceToAxis() const
 {
     return this -> sourceToAxis;
 };
@@ -90,14 +90,10 @@ smurf::TranslationalJoint::TranslationalJoint(smurf::Frame* sourceFrame, smurf::
                                               const Eigen::Affine3d& parentToJointOrigin, boost::shared_ptr<urdf::Joint> jointModel): 
                                               Joint(sourceFrame, targetFrame, provider, port, driverName, limits, sourceToAxis, parentToJointOrigin, jointModel), 
                                               translationAxis(translationAxis)
-                                              {
-                                                  
-                                                                                            }
+                                              {}
                                                                                             
 smurf::Sensor::Sensor()
 {
-
-
 }
 
 smurf::Sensor::Sensor(const std::string &name, const std::string &type, const std::string &taskInstanceName, Frame *inFrame)
@@ -128,18 +124,11 @@ std::string smurf::Sensor::gettaskInstanceName()
     return this->taskInstanceName;
 }
 
-
 smurf::StaticTransformation::StaticTransformation(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const Eigen::Affine3d& sourceToTarget): 
     Transformation(sourceFrame, targetFrame), sourceToTarget(sourceToTarget)
 {
 
 }
-//smurf::StaticTransformation::StaticTransformation()
-//{
-
-//}
-
-
 
 smurf::StaticTransformation::StaticTransformation(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const Eigen::Quaterniond& rotation, const Eigen::Vector3d& translation): 
     Transformation(sourceFrame, targetFrame)
@@ -159,7 +148,6 @@ smurf::DynamicTransformation::DynamicTransformation(smurf::Frame* sourceFrame, s
 {
 
 }
-
 
 smurf::Robot::Robot()
 {
@@ -256,7 +244,6 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
                 Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
                 sourceToAxis.translation() = axis;
                 base::JointLimitRange limits;
-                // push the correspondent smurf::joint 
                 const urdf::Pose parentToOrigin(joint->parent_to_joint_origin_transform);
                 Eigen::Quaterniond rot(parentToOrigin.rotation.w, parentToOrigin.rotation.x, parentToOrigin.rotation.y, parentToOrigin.rotation.z);
                 Eigen::Vector3d trans(parentToOrigin.position.x, parentToOrigin.position.y, parentToOrigin.position.z);
@@ -288,6 +275,8 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
                 
                 Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
                 Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
+                sourceToAxis.translation() = axis;
+                
                 DynamicTransformation *transform = NULL;
                 Joint *smurfJoint;
                 // push the correspondent smurf::joint 
