@@ -106,7 +106,6 @@ class StaticTransformation : public Transformation
 public:
     StaticTransformation(Frame* sourceFrame, Frame* targetFrame, const Eigen::Affine3d &sourceToTarget);
     StaticTransformation(Frame* sourceFrame, Frame* targetFrame, const Eigen::Quaterniond &rotation, const Eigen::Vector3d &translation);
-    //StaticTransformation();
     
     const Eigen::Affine3d &getTransformation() const;
 
@@ -157,7 +156,7 @@ public:
     
     Joint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Affine3d& parentToJointOrigin, boost::shared_ptr<urdf::Joint> jointModel); 
     
-    const Eigen::Affine3d &getAxisTransformation() const;
+    const Eigen::Affine3d &getSourceToAxis() const;
     
     const Eigen::Affine3d &getParentToJointOrigin() const;
     
