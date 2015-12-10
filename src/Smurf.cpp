@@ -183,7 +183,7 @@ std::string checkGet(configmaps::ConfigMap &map, const std::string &key)
  *  Each link in the map has collision data
  * 
  */
-void smurf::Robot::loadCollidables(const boost::shared_ptr< urdf::ModelInterface >& model)
+void smurf::Robot::loadCollidables()
 {
     for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
     {

@@ -237,7 +237,7 @@ public:
     
     void loadFromSmurf(const std::string &path);
     
-    void loadCollidables(const boost::shared_ptr< urdf::ModelInterface >& model);
+    void loadCollidables();
     
     const std::vector<StaticTransformation *> & getStaticTransforms() const
     {
