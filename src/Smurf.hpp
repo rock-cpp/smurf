@@ -36,8 +36,9 @@ public:
     void setVisuals(const std::vector<urdf::Visual>& visuals);
     void getVisuals(std::vector<urdf::Visual>& Visuals) const;
     std::vector<urdf::Visual>& getVisuals();
-    void setCollidables(const std::vector< boost::shared_ptr< urdf::Collision > >& collisionVector);
-    std::vector< boost::shared_ptr< urdf::Collision >> getCollidables();
+    //void setCollidables(const std::vector< boost::shared_ptr< urdf::Collision > >& collisionVector);
+    std::vector< urdf::Collision >& getCollisions();
+    void addCollision(const urdf::Collision& collision);
     
 private:
     ///Name of the frame
@@ -45,7 +46,7 @@ private:
     
     ///Collision objects inside the frame
     std::vector<Collidable> collisionObjects;
-    std::vector< boost::shared_ptr< urdf::Collision >> collisions;
+    std::vector<urdf::Collision> collisions;
     
     ///Visuals that can be displayed inside the frame
     std::vector<urdf::Visual> visuals;
@@ -234,9 +235,9 @@ public:
     
     Robot();
     
-    void loadCollidables(boost::shared_ptr< urdf::ModelInterface > model, configmaps::ConfigMap map);
-    
     void loadFromSmurf(const std::string &path);
+    
+    void loadCollidables(const boost::shared_ptr< urdf::ModelInterface >& model);
     
     const std::vector<StaticTransformation *> & getStaticTransforms() const
     {
