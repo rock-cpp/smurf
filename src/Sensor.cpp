@@ -12,26 +12,22 @@ smurf::Sensor::Sensor(const std::string &name, const std::string &type, const st
     this->attachmentPoint=inFrame;
 }
 
-std::string smurf::Sensor::getname()
+std::string smurf::Sensor::getName()
 {
     return this->name;
 }
 
-std::string smurf::Sensor::gettype()
+std::string smurf::Sensor::getType()
 {
     return this->type;
 }
 
-smurf::Frame * smurf::Sensor::getattachmentPoint()
+smurf::Frame * smurf::Sensor::getAttachmentPoint()
 {
     return this->attachmentPoint;
 }
 
-std::string smurf::Sensor::gettaskInstanceName()
+std::string smurf::Sensor::getTaskInstanceName()
 {
     return this->taskInstanceName;
 }
-
-
-
-
