@@ -1,8 +1,26 @@
 find_package( Boost COMPONENTS filesystem)
 
 rock_library(smurf
-    SOURCES Smurf.cpp
-    HEADERS Smurf.hpp
+    SOURCES Robot.cpp 
+            Collidable.cpp
+            DynamicTransformation.cpp
+            Frame.cpp
+            Joint.cpp
+            RotationalJoint.cpp
+            Sensor.cpp
+            StaticTransformation.cpp
+            Transformation.cpp
+            TranslationalJoint.cpp
+    HEADERS Robot.hpp
+            Collidable.hpp
+            DynamicTransformation.hpp
+            Frame.hpp
+            Joint.hpp
+            RotationalJoint.hpp
+            Sensor.hpp
+            StaticTransformation.hpp
+            Transformation.hpp
+            TranslationalJoint.hpp
     DEPS_PKGCONFIG
         base-types
         configmaps
