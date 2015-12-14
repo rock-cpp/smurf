@@ -43,9 +43,12 @@ std::vector<urdf::Collision> &smurf::Frame::getCollisions()
     return this -> collisions;
 }
 
-/* TODO
-void addCollidable(const smurf::Collidable & collidable);
+void smurf::Frame::addCollidable(const smurf::Collidable& collidable)
+{
+    collidables.push_back(collidable);
+}
 
+/* TODO
 void setCollidables(const std::vector<smurf::Collidable>& collidables);
 */
 

@@ -34,8 +34,10 @@ namespace smurf
          */
         std::vector<smurf::Collidable> &getCollidables();
         void getCollidables(std::vector<smurf::Collidable> &Collidables) const;
-        /*
+        
         void addCollidable(const smurf::Collidable & collidable);
+        
+        /*
         void setCollidables(const std::vector<smurf::Collidable>& collidables);
         */
         

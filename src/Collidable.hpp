@@ -2,6 +2,8 @@
 #define COLLIDABLE_H
 
 #include <string>
+#include <urdf_model/model.h>
+
 
 namespace smurf{
     

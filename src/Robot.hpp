@@ -5,6 +5,7 @@
 #include "DynamicTransformation.hpp"
 #include "Joint.hpp"
 #include "Sensor.hpp"
+#include <configmaps/ConfigData.h>
 
 /*
  * TODO Do we miss this includes somewhere?
@@ -21,6 +22,15 @@ namespace smurf
         
         void loadFromSmurf(const std::string &path);
         
+        /**
+         * Loads the URDF collision objects
+         * 
+         */
+        void loadCollisions();
+        
+        /**
+         * Loads the SMURF Collidable objects
+         */
         void loadCollidables();
         
         const std::vector<smurf::StaticTransformation *> & getStaticTransforms() const
@@ -59,6 +69,7 @@ namespace smurf
         
         Frame *rootFrame;
         boost::shared_ptr<urdf::ModelInterface> model;
+        configmaps::ConfigMap smurfMap;
         
         std::vector<smurf::Frame *> availableFrames;
         std::vector<smurf::StaticTransformation *> staticTransforms;

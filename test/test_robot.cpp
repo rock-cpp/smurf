@@ -66,5 +66,6 @@ BOOST_AUTO_TEST_CASE(test_load_collidables)
     boost::shared_ptr<urdf::ModelInterface> model = smurf_parser::parseFile(&map, filepath.parent_path().generic_string(), filepath.filename().generic_string(), true);
     smurf::Robot robot;
     robot.loadFromSmurf(path); // This should load all the frames
+    robot.loadCollisions();
     robot.loadCollidables();
 }    
