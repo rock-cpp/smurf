@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <smurf/Smurf.hpp>
+#include <smurf/Robot.hpp>
 #include <orocos_cpp/YAMLConfiguration.hpp>
 #include <urdf_model/link.h>
 
