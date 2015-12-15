@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <smurf/Robot.hpp>
-#include <orocos_cpp/YAMLConfiguration.hpp>
+//#include <orocos_cpp/YAMLConfiguration.hpp>
 #include <urdf_model/link.h>
 
 #include <configmaps/ConfigData.h>
@@ -10,8 +10,9 @@
 
 using namespace std;
 
-const string path = orocos_cpp::YAMLConfigParser::applyStringVariableInsertions("<%=ENV(AUTOPROJ_CURRENT_ROOT) %>/<%=ENV(ASGUARD4)%>");
+//const string path = orocos_cpp::YAMLConfigParser::applyStringVariableInsertions("<%=ENV(AUTOPROJ_CURRENT_ROOT) %>/<%=ENV(ASGUARD4)%>");
 //const string robotPath = orocos_cpp::YAMLConfigParser::applyStringVariableInsertions("<%=ENV(AUTOPROJ_CURRENT_ROOT) %>/<%=ENV(SPACECLIMBER)%>");
+const string path = "";
 
 BOOST_AUTO_TEST_CASE(test_load_from_smurf)
 {
