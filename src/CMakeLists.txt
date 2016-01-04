@@ -5,6 +5,7 @@ rock_library(smurf
             Collidable.cpp
             DynamicTransformation.cpp
             Frame.cpp
+            Inertial.cpp
             Joint.cpp
             RotationalJoint.cpp
             Sensor.cpp
@@ -15,6 +16,7 @@ rock_library(smurf
             Collidable.hpp
             DynamicTransformation.hpp
             Frame.hpp
+            Inertial.hpp
             Joint.hpp
             RotationalJoint.hpp
             Sensor.hpp

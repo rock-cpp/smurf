@@ -3,6 +3,7 @@
 
 #include <urdf_model/model.h>
 #include "Collidable.hpp"
+#include "Inertial.hpp"
 
 namespace smurf
 {
@@ -37,6 +38,16 @@ namespace smurf
         
         void addCollidable(const smurf::Collidable & collidable);
         
+        void setInertial(const smurf::Inertial& inertialM)
+        {
+            this->inertial = inertialM;
+        };
+        
+        smurf::Inertial getInertial()
+        {
+            return this->inertial;
+        };
+        
         /*
         void setCollidables(const std::vector<smurf::Collidable>& collidables);
         */
@@ -53,6 +64,7 @@ namespace smurf
         ///Visuals that can be displayed inside the frame
         std::vector<urdf::Visual> visuals;
         
+        smurf::Inertial inertial;
         ///TODO add additional data in map or whatever
         
     };

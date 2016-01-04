@@ -28,6 +28,8 @@ namespace smurf
          */
         void loadCollisions();
         
+        void loadInertials();
+        
         const int getBitmask(const std::string& collisionName, const std::string& linkName);
 
         /**
