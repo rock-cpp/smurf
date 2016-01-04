@@ -37,16 +37,41 @@ smurf::Frame* smurf::Robot::getFrameByName(const std::string& name)
     throw std::runtime_error("smurf::Robot::getFrameByName : Error , frame " + name + " is not known" );
 }
 
-
+const int smurf::Robot::getBitmask(const std::string& collisionName, const std::string& linkName)
+{
+    int result = 0;
+    bool found = false;
+    configmaps::ConfigVector::iterator it = smurfMap["collision"].begin();
+    while ((! found) and (it != smurfMap["collision"].end()))
+    {
+        configmaps::ConfigMap &collidableMap(it->children);
+        std::string name = static_cast<std::string>(collidableMap["name"]);
+        std::string link = static_cast<std::string>(collidableMap["link"]);
+        if ((name == collisionName) and (linkName == link))
+        {
+            found = true;
+            result = static_cast<int>(collidableMap["bitmask"]);
+            LOG_DEBUG_S << "[smurf::Robot::getBitmask] Found the bitmask ("<< result <<")correspondent to the collisionName "<< collisionName;
+        }
+        ++it;
+    }
+    return result;
+}
+    
 void smurf::Robot::loadCollidables()
 {
-    for (configmaps::ConfigVector::iterator it = smurfMap["collision"].begin(); it != smurfMap["collision"].end(); ++it) 
+    // If one link has more than one collision object then group them ---> I assigned the same group id for collidables in the same frame
+    // If one link has inertial data in the urdf model and collision data and they are in the same position, then needs a groupID and loadCollision is false? -> Don't do whatever is done in handleCollision
+    LOG_DEBUG_S << "[smurf::Robot::loadCollidables] Loading collidables just started ";
+    for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
     {
-        configmaps::ConfigMap collidableMap = it->children;
-        smurf::Collidable* collidable = new Collidable(collidableMap["name"], collidableMap["bitmask"] );
-        Frame* frame = getFrameByName(collidableMap["link"]);
-        frame->addCollidable(*collidable);
-        LOG_DEBUG_S << "[smurf::Robot::loadCollidables] Loaded the collidable "<< static_cast<std::string>(collidableMap["name"]);
+        smurf::Frame* frame = getFrameByName(link.first);
+        for(boost::shared_ptr<urdf::Collision> collision : link.second->collision_array)
+        {
+            // Find the correspondent collidable data if exists and create the collidable object
+            smurf::Collidable* collidable = new Collidable(collision->name, getBitmask(collision->name, link.first), *collision );
+            frame->addCollidable(*collidable);
+        }
     }
 }
 
@@ -57,20 +82,28 @@ void smurf::Robot::loadCollidables()
  */
 void smurf::Robot::loadCollisions()
 {
-    LOG_DEBUG_S << " ********* :) ************ ";
     for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
     {
-        LOG_DEBUG_S << "Found link =:-D  " << link.first;
         smurf::Frame* frame = getFrameByName(link.first);
         for(boost::shared_ptr<urdf::Collision> collision : link.second->collision_array)
         {
             frame->addCollision(*collision);
         }
-        
     }
-    LOG_DEBUG_S << " ********* :) ************ ";
-    
+}
 
+void smurf::Robot::loadInertials()
+{
+    for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
+    {
+        smurf::Frame* frame = getFrameByName(link.first);
+        LOG_DEBUG_S << " LOAD INERTIALS Link name " << link.first;
+        if (link.second->inertial != NULL)
+        {
+            smurf::Inertial inertial(*link.second->inertial);
+            frame->setInertial(inertial);
+        }
+    }
 }
 
 void smurf::Robot::loadFromSmurf(const std::string& path)

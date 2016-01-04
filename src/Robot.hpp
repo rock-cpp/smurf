@@ -28,6 +28,8 @@ namespace smurf
          */
         void loadCollisions();
         
+        const int getBitmask(const std::string& collisionName, const std::string& linkName);
+
         /**
          * Loads the SMURF Collidable objects
          */
