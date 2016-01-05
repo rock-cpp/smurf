@@ -16,13 +16,26 @@ namespace smurf{
         {
             this->groupId = id;
         }
-        int getGroupId()
+        int getGroupId() const
         {
             return this->groupId;
         }
+        urdf::Inertial getUrdfInertial() const
+        {
+            return this->inertial;
+        };
+        void setName(std::string name)
+        {
+            this->name = name;
+        };
+        std::string getName() const
+        {
+            return this->name;
+        };
     private:
         urdf::Inertial inertial;
         int groupId;
+        std::string name;
     };
     
 };

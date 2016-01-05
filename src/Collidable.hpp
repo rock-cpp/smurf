@@ -11,16 +11,26 @@ namespace smurf{
     {
     public:
         Collidable(const std::string& name, const int& bitmask, const urdf::Collision& collision);
-        std::string getName();
-        int getBitmask();
-        urdf::Collision getCollision();
-        void setGroupId(const int id)
-        {
-            this->groupId = id;
+        std::string getName() const 
+        { 
+            return this->name; 
         }
-        int getGroupId()
-        {
-            return this->groupId;
+        int getBitmask() const
+        { 
+            return this->bitmask;  
+        }
+        urdf::Collision getCollision() const 
+        { 
+            return this->collision; 
+        }
+        void setGroupId(const int id) 
+        { 
+            this->groupId = id; 
+          
+        }
+        int getGroupId() const 
+        { 
+            return this->groupId; 
         }
     private:
         std::string name;

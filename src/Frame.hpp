@@ -48,6 +48,16 @@ namespace smurf
             return this->inertial;
         };
         
+        void setGroupId(int id)
+        {
+            this->groupId = id;
+        };
+        
+        int getGroupId() const
+        {
+            return this->groupId;
+        };
+        
         /*
         void setCollidables(const std::vector<smurf::Collidable>& collidables);
         */
@@ -66,6 +76,8 @@ namespace smurf
         
         smurf::Inertial inertial;
         ///TODO add additional data in map or whatever
+        
+        int groupId;
         
     };
     
