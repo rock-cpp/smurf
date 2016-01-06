@@ -7,6 +7,8 @@
 #include "Sensor.hpp"
 #include <configmaps/ConfigData.h>
 
+#include <mars/interfaces/contact_params.h>
+
 /*
  * TODO Do we miss this includes somewhere?
 #include <base/samples/RigidBodyState.hpp>
@@ -30,7 +32,7 @@ namespace smurf
         
         void loadInertials();
         
-        const int getBitmask(const std::string& collisionName, const std::string& linkName);
+        const mars::interfaces::contact_params getContactParams(const std::string& collisionName, const std::string& linkName);
 
         /**
          * Loads the SMURF Collidable objects

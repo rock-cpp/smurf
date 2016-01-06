@@ -37,9 +37,10 @@ smurf::Frame* smurf::Robot::getFrameByName(const std::string& name)
     throw std::runtime_error("smurf::Robot::getFrameByName : Error , frame " + name + " is not known" );
 }
 
-const int smurf::Robot::getBitmask(const std::string& collisionName, const std::string& linkName)
+const mars::interfaces::contact_params smurf::Robot::getContactParams(const std::string& collisionName, const std::string& linkName)
 {
-    int result = 0;
+    mars::interfaces::contact_params result;
+    result.setZero();
     bool found = false;
     configmaps::ConfigVector::iterator it = smurfMap["collision"].begin();
     while ((! found) and (it != smurfMap["collision"].end()))
@@ -50,8 +51,15 @@ const int smurf::Robot::getBitmask(const std::string& collisionName, const std::
         if ((name == collisionName) and (linkName == link))
         {
             found = true;
-            result = static_cast<int>(collidableMap["bitmask"]);
-            LOG_DEBUG_S << "[smurf::Robot::getBitmask] Found the bitmask ("<< result <<")correspondent to the collisionName "<< collisionName;
+            double stored_cfm = static_cast<double>(collidableMap["ccfm"]);
+            // When not set in the smurf, the returned value for the cfm is 0.0
+            if (stored_cfm != 0.0) 
+            { 
+              result.cfm = static_cast<double>(collidableMap["ccfm"]); 
+            }
+            result.coll_bitmask = static_cast<int>(collidableMap["bitmask"]);
+            LOG_DEBUG_S << "[smurf::Robot::getContactParams] Found the ccfm ("<< result.cfm <<")correspondent to the collisionName "<< collisionName;
+            LOG_DEBUG_S << "[smurf::Robot::getContactParams] Found the bitmask ("<< result.coll_bitmask <<")correspondent to the collisionName "<< collisionName;
         }
         ++it;
     }
@@ -69,7 +77,7 @@ void smurf::Robot::loadCollidables()
         for(boost::shared_ptr<urdf::Collision> collision : link.second->collision_array)
         {
             // Find the correspondent collidable data if exists and create the collidable object
-            smurf::Collidable* collidable = new Collidable(collision->name, getBitmask(collision->name, link.first), *collision );
+            smurf::Collidable* collidable = new Collidable(collision->name, getContactParams(collision->name, link.first), *collision );
             frame->addCollidable(*collidable);
         }
     }
