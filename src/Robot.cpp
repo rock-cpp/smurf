@@ -9,6 +9,7 @@
 #include "RotationalJoint.hpp"
 #include "TranslationalJoint.hpp"
 
+
 std::string checkGet(configmaps::ConfigMap &map, const std::string &key)
 {
     auto it = map.find(key);
@@ -58,8 +59,11 @@ const mars::interfaces::contact_params smurf::Robot::getContactParams(const std:
               result.cfm = static_cast<double>(collidableMap["ccfm"]); 
             }
             result.coll_bitmask = static_cast<int>(collidableMap["bitmask"]);
-            LOG_DEBUG_S << "[smurf::Robot::getContactParams] Found the ccfm ("<< result.cfm <<")correspondent to the collisionName "<< collisionName;
-            LOG_DEBUG_S << "[smurf::Robot::getContactParams] Found the bitmask ("<< result.coll_bitmask <<")correspondent to the collisionName "<< collisionName;
+            if(debug)
+            {
+                LOG_DEBUG_S << "[smurf::Robot::getContactParams] Found the ccfm ("<< result.cfm <<")correspondent to the collisionName "<< collisionName;
+                LOG_DEBUG_S << "[smurf::Robot::getContactParams] Found the bitmask ("<< result.coll_bitmask <<")correspondent to the collisionName "<< collisionName;
+            }
         }
         ++it;
     }
@@ -70,7 +74,7 @@ void smurf::Robot::loadCollidables()
 {
     // If one link has more than one collision object then group them ---> I assigned the same group id for collidables in the same frame
     // If one link has inertial data in the urdf model and collision data and they are in the same position, then needs a groupID and loadCollision is false? -> Don't do whatever is done in handleCollision
-    LOG_DEBUG_S << "[smurf::Robot::loadCollidables] Loading collidables just started ";
+    if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadCollidables] Loading collidables just started ";}
     for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
     {
         smurf::Frame* frame = getFrameByName(link.first);
@@ -105,7 +109,7 @@ void smurf::Robot::loadInertials()
     for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
     {
         smurf::Frame* frame = getFrameByName(link.first);
-        LOG_DEBUG_S << " LOAD INERTIALS Link name " << link.first;
+        if (debug) { LOG_DEBUG_S << " LOAD INERTIALS Link name " << link.first;}
         if (link.second->inertial != NULL)
         {
             smurf::Inertial inertial(*link.second->inertial);

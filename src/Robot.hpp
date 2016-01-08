@@ -14,6 +14,7 @@
 #include <base/samples/RigidBodyState.hpp>
 */
 
+
 namespace smurf
 {
     class Robot
@@ -82,6 +83,8 @@ namespace smurf
         std::vector<smurf::DynamicTransformation *> dynamicTransforms;
         std::vector<smurf::Joint *> joints;
         std::vector<smurf::Sensor *> sensors;
+        
+        const bool debug = false;
     };
 };
 #endif // SMURF_H
