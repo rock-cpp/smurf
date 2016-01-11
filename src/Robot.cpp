@@ -118,6 +118,110 @@ void smurf::Robot::loadInertials()
     }
 }
 
+void smurf::Robot::loadJoints()
+{
+    for(std::pair<std::string, boost::shared_ptr<urdf::Joint> > jointIt: model->joints_)
+    {
+
+        boost::shared_ptr<urdf::Joint> joint = jointIt.second;
+        //std::cout << "Adding joint " << joint->name << std::endl;
+        
+        Frame *source = getFrameByName(joint->parent_link_name);
+        Frame *target = getFrameByName(joint->child_link_name);
+
+        //TODO this might not be set in some cases, perhaps force a check
+        configmaps::ConfigMap annotations;
+        for(configmaps::ConfigItem &cv : smurfMap["joints"])
+        {
+            if(static_cast<std::string>(cv.children["name"]) == joint->name)
+            {
+                annotations = cv.children;
+            }
+        }
+        switch(joint->type)
+        {
+          case urdf::Joint::FIXED:
+            {
+                const urdf::Pose &tr(joint->parent_to_joint_origin_transform);     
+                StaticTransformation *transform = new StaticTransformation(source, target,
+                                                                           Eigen::Quaterniond(tr.rotation.w, tr.rotation.x, tr.rotation.y, tr.rotation.z),
+                                                                           Eigen::Vector3d(tr.position.x, tr.position.y, tr.position.z));              
+                if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadJoint] Pushing back the statict transformation for the fixed joint" << joint->name;}
+                staticTransforms.push_back(transform);
+            }
+            break;
+            case urdf::Joint::FLOATING:
+            {
+                DynamicTransformation *transform = new DynamicTransformation(source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"));
+                dynamicTransforms.push_back(transform);
+                Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
+                Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
+                sourceToAxis.translation() = axis;
+                base::JointLimitRange limits;
+                const urdf::Pose parentToOrigin(joint->parent_to_joint_origin_transform);
+                Eigen::Quaterniond rot(parentToOrigin.rotation.w, parentToOrigin.rotation.x, parentToOrigin.rotation.y, parentToOrigin.rotation.z);
+                Eigen::Vector3d trans(parentToOrigin.position.x, parentToOrigin.position.y, parentToOrigin.position.z);
+                Eigen::Affine3d parentToOriginAff;
+                parentToOriginAff.setIdentity();
+                parentToOriginAff.rotate(rot);
+                parentToOriginAff.translation() = trans;
+                Joint *smurfJoint = new Joint (source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, parentToOriginAff, joint); 
+                joints.push_back(smurfJoint);
+            }
+            break;
+            case urdf::Joint::REVOLUTE:
+            case urdf::Joint::CONTINUOUS:
+            case urdf::Joint::PRISMATIC:
+            {
+                base::JointState minState;
+                minState.position = joint->limits->lower;
+                minState.effort = 0;
+                minState.speed = 0;
+                
+                base::JointState maxState;
+                maxState.position = joint->limits->upper;
+                maxState.effort = joint->limits->effort;
+                maxState.speed = joint->limits->velocity;
+                
+                base::JointLimitRange limits;
+                limits.min = minState;
+                limits.max = maxState;
+                
+                Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
+                Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
+                sourceToAxis.translation() = axis;
+                
+                DynamicTransformation *transform = NULL;
+                Joint *smurfJoint;
+                // push the correspondent smurf::joint 
+                const urdf::Pose parentToOrigin(joint->parent_to_joint_origin_transform);
+                Eigen::Quaterniond rot(parentToOrigin.rotation.w, parentToOrigin.rotation.x, parentToOrigin.rotation.y, parentToOrigin.rotation.z);
+                Eigen::Vector3d trans(parentToOrigin.position.x, parentToOrigin.position.y, parentToOrigin.position.z);
+                Eigen::Affine3d parentToOriginAff;
+                parentToOriginAff.setIdentity();
+                parentToOriginAff.rotate(rot);
+                parentToOriginAff.translation() = trans;
+                if(joint->type == urdf::Joint::REVOLUTE || joint->type == urdf::Joint::CONTINUOUS)
+                {
+                    transform = new RotationalJoint(source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
+                }
+                else
+                {
+                    transform = new TranslationalJoint(source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
+                }
+                smurfJoint = (Joint *)transform;
+                if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadJoint] Pushing back the dynamic transformation for revolute or continuous joint" << joint->name;}
+                dynamicTransforms.push_back(transform);
+                joints.push_back(smurfJoint);
+            }
+            break;
+            default:
+                throw std::runtime_error("Smurf: Error, got unhandles Joint type");
+        }
+    }
+
+}
+
 void smurf::Robot::loadFromSmurf(const std::string& path)
 {
     //configmaps::ConfigMap smurfMap;
@@ -149,6 +253,9 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
         //std::cout << "Adding link frame " << frame->getName() << std::endl;
     }
 
+    loadJoints();
+    
+    /*
     for(std::pair<std::string, boost::shared_ptr<urdf::Joint> > jointIt: model->joints_)
     {
         boost::shared_ptr<urdf::Joint> joint = jointIt.second;
@@ -246,7 +353,7 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
                 throw std::runtime_error("Smurf: Error, got unhandles Joint type");
         }
     }
-
+    */
     
     // parse sensors from map
     for (configmaps::ConfigVector::iterator it = smurfMap["sensors"].begin(); it != smurfMap["sensors"].end(); ++it) 

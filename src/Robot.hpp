@@ -33,6 +33,8 @@ namespace smurf
         
         void loadInertials();
         
+        void loadJoints();
+        
         const mars::interfaces::contact_params getContactParams(const std::string& collisionName, const std::string& linkName);
 
         /**
