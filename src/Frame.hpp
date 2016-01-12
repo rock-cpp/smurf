@@ -41,6 +41,7 @@ namespace smurf
         void setInertial(const smurf::Inertial& inertialM)
         {
             this->inertial = inertialM;
+            this->hasInertial = true;
         };
         
         smurf::Inertial getInertial()
@@ -58,6 +59,11 @@ namespace smurf
             return this->groupId;
         };
         
+        bool getHasInertial() const
+        {
+            return this->hasInertial;
+        }
+        
         /*
         void setCollidables(const std::vector<smurf::Collidable>& collidables);
         */
@@ -73,6 +79,8 @@ namespace smurf
         
         ///Visuals that can be displayed inside the frame
         std::vector<urdf::Visual> visuals;
+        
+        bool hasInertial;
         
         smurf::Inertial inertial;
         ///TODO add additional data in map or whatever

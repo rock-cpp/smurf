@@ -1,15 +1,15 @@
 #include "Frame.hpp"
 
 smurf::Frame::Frame(const std::string &name, const std::vector<urdf::Visual>& visuals) :
-    name(name), visuals(visuals)
+    name(name), visuals(visuals), hasInertial(false)
 {
 }
 
-smurf::Frame::Frame(const std::string& name): name(name)
+smurf::Frame::Frame(const std::string& name): name(name), hasInertial(false)
 {
 }
 
-smurf::Frame::Frame()
+smurf::Frame::Frame(): hasInertial(false)
 {
 }
 
