@@ -109,11 +109,12 @@ void smurf::Robot::loadInertials()
     for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
     {
         smurf::Frame* frame = getFrameByName(link.first);
-        if (debug) { LOG_DEBUG_S << " LOAD INERTIALS Link name " << link.first;}
+        if (debug) { LOG_DEBUG_S << " [smurf::Robot::loadInertials] Checking for inertials in link with name " << link.first;}
         if (link.second->inertial != NULL)
         {
             smurf::Inertial inertial(*link.second->inertial);
             frame->setInertial(inertial);
+            if (debug) { LOG_DEBUG_S << " [smurf::Robot::loadInertials] " << link.first << ": Inertial found in the link";}
         }
     }
 }
