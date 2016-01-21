@@ -13,7 +13,9 @@ using namespace std;
 //const string path = orocos_cpp::YAMLConfigParser::applyStringVariableInsertions("<%=ENV(AUTOPROJ_CURRENT_ROOT) %>/<%=ENV(ASGUARD4)%>");
 //const string robotPath = orocos_cpp::YAMLConfigParser::applyStringVariableInsertions("<%=ENV(AUTOPROJ_CURRENT_ROOT) %>/<%=ENV(SPACECLIMBER)%>");
 //const string path="/home/dfki.uni-bremen.de/rdominguez/Entern/1505/tools/smurf/test/smurfs/asguard_v4/smurf/asguard_v4.smurf";
-const string path="/home/dfki.uni-bremen.de/rdominguez/Entern/1505/tools/smurf/test/smurfs/spaceclimber/smurf/spaceclimber.smurf";
+//const string path="/home/dfki.uni-bremen.de/rdominguez/Entern/1505/tools/smurf/test/smurfs/spaceclimber/smurf/spaceclimber.smurf";
+const string path="./sample_smurfs/two_boxes_joined/smurf/two_boxes.smurf";
+// Test has to be run from test folder otherwise the smurf document won't be found
 
 BOOST_AUTO_TEST_CASE(test_load_from_smurf)
 {
@@ -67,8 +69,5 @@ BOOST_AUTO_TEST_CASE(test_load_collidables)
     boost::filesystem::path filepath(path);
     boost::shared_ptr<urdf::ModelInterface> model = smurf_parser::parseFile(&map, filepath.parent_path().generic_string(), filepath.filename().generic_string(), true);
     smurf::Robot robot;
-    robot.loadFromSmurf(path); // This should load all the frames
-    //robot.loadCollisions();
-    robot.loadInertials();
-    robot.loadCollidables();
+    robot.loadFromSmurf(path); // This one already loads the collidables and the inertials
 }    

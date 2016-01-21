@@ -263,6 +263,8 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
         smurf::Sensor *sensor = new Sensor(sensorMap["name"], sensorMap["type"], sensorMap["taskInstanceName"], getFrameByName(sensorMap["link"]));
         sensors.push_back(sensor);
     }
+    loadCollidables();
+    loadInertials();
 }
 
 
