@@ -22,11 +22,8 @@ std::string checkGet(configmaps::ConfigMap &map, const std::string &key)
     return it->second;
 }
 
-smurf::Robot::Robot()
-{
 
-}
-
+// Private
 smurf::Frame* smurf::Robot::getFrameByName(const std::string& name)
 {
     for(Frame *fr: availableFrames)
@@ -72,8 +69,7 @@ const mars::interfaces::contact_params smurf::Robot::getContactParams(const std:
     
 void smurf::Robot::loadCollidables()
 {
-    // If one link has more than one collision object then group them ---> I assigned the same group id for collidables in the same frame
-    // If one link has inertial data in the urdf model and collision data and they are in the same position, then needs a groupID and loadCollision is false? -> Don't do whatever is done in handleCollision
+
     if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadCollidables] Loading collidables just started ";}
     for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
     {
@@ -87,11 +83,6 @@ void smurf::Robot::loadCollidables()
     }
 }
 
-/*
- *  Each link in the map has collision data
- * TODO: Make another method that loads the collidables
- * 
- */
 void smurf::Robot::loadCollisions()
 {
     for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
@@ -125,7 +116,6 @@ void smurf::Robot::loadJoints()
     {
 
         boost::shared_ptr<urdf::Joint> joint = jointIt.second;
-        //std::cout << "Adding joint " << joint->name << std::endl;
         
         Frame *source = getFrameByName(joint->parent_link_name);
         Frame *target = getFrameByName(joint->child_link_name);
@@ -225,8 +215,6 @@ void smurf::Robot::loadJoints()
 
 void smurf::Robot::loadFromSmurf(const std::string& path)
 {
-    //configmaps::ConfigMap smurfMap;
-
     // parse joints from model
     boost::filesystem::path filepath(path);
     model = smurf_parser::parseFile(&smurfMap, filepath.parent_path().generic_string(), filepath.filename().generic_string(), true);
@@ -238,7 +226,6 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
 
         Frame *frame = new Frame(fr["name"]);
         availableFrames.push_back(frame);
-        //std::cout << "Adding additional frame " << frame->getName() << std::endl;
     }
     
     for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
@@ -250,8 +237,6 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
         }
         availableFrames.push_back(frame);
         
-
-        //std::cout << "Adding link frame " << frame->getName() << std::endl;
     }
 
     loadJoints(); 

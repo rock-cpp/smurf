@@ -9,38 +9,13 @@
 
 #include <mars/interfaces/contact_params.h>
 
-/*
- * TODO Do we miss this includes somewhere?
-#include <base/samples/RigidBodyState.hpp>
-*/
-
-
 namespace smurf
 {
     class Robot
     {
     public:
         
-        Robot();
-        
-        void loadFromSmurf(const std::string &path);
-        
-        /**
-         * Loads the URDF collision objects
-         * 
-         */
-        void loadCollisions();
-        
-        void loadInertials();
-        
-        void loadJoints();
-        
-        const mars::interfaces::contact_params getContactParams(const std::string& collisionName, const std::string& linkName);
-
-        /**
-         * Loads the SMURF Collidable objects
-         */
-        void loadCollidables();
+        Robot(){};
         
         const std::vector<smurf::StaticTransformation *> & getStaticTransforms() const
         {
@@ -71,6 +46,50 @@ namespace smurf
         {
             return rootFrame;
         };
+
+        const mars::interfaces::contact_params getContactParams(const std::string& collisionName, const std::string& linkName);
+
+        /**
+         * Loads the SMURF Collidable objects in their correspondent frames
+         * 
+         * The smurf collidable contains the urdf collision object. Therefore 
+         * if loadCollidables is executed, loadCollisions in no needed.
+         */
+        void loadCollidables();
+        
+        /**
+         * Loads the URDF collision objects in their correspondent frames
+         */
+        void loadCollisions();
+        
+        /**
+         * Loads the SMURF Inertial objects in their correspondent frames
+         * 
+         * The smurf inertial object contains the urdf inertial object.
+         */
+        void loadInertials();
+        
+        /**
+         * Loads the different joints of the model in the correspondent 
+         * frames.
+         * 
+         * - Fixed joints are loaded as staticTransforms
+         * - Floating, revolute and prismatic joints as dynamicTransforms
+         * and as Joints.
+         */
+        void loadJoints();
+        
+        /**
+         * Loads all the information from the Smurf model in the Robot 
+         * object.
+         * 
+         * - Creates the frames (from the links and from the visuals)
+         * - Loads the joints
+         * - Loads the sensors
+         * - Loads the collidables
+         * - Loads the inertials
+         */
+        void loadFromSmurf(const std::string &path);
         
     protected:
         
