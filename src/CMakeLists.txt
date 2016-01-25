@@ -27,6 +27,7 @@ rock_library(smurf
         base-types
         configmaps
         smurf_parser
+        base-lib
     DEPS_PLAIN 
         Boost_FILESYSTEM 
 )
