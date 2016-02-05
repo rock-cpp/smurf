@@ -23,6 +23,7 @@ rock_library(smurf
             StaticTransformation.hpp
             Transformation.hpp
             TranslationalJoint.hpp
+            Smurf.hpp
     DEPS_PKGCONFIG
         base-types
         configmaps
