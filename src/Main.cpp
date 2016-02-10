@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Smurf.hpp"
+#include "Robot.hpp"
 int main(int argc, char** argv)
 {
     smurf::Robot robot;
