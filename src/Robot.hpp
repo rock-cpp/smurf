@@ -79,6 +79,8 @@ namespace smurf
          */
         void loadJoints();
         
+        void loadMotors();
+        
         /**
          * Loads all the information from the Smurf model in the Robot 
          * object.
@@ -105,7 +107,7 @@ namespace smurf
         std::vector<smurf::Joint *> joints;
         std::vector<smurf::Sensor *> sensors;
         
-        const bool debug = false;
+        const bool debug = true;
     };
 };
 #endif // SMURF_H

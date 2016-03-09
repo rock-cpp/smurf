@@ -213,6 +213,18 @@ void smurf::Robot::loadJoints()
 
 }
 
+void smurf::Robot::loadMotors()
+{
+    if (debug) { LOG_DEBUG_S << " [smurf::Robot::loadMotor] Called loadMotors";}
+    for (configmaps::ConfigVector::iterator it = smurfMap["motors"].begin(); it != smurfMap["motors"].end(); ++it) 
+    {
+        if (debug) { LOG_DEBUG_S << " [smurf::Robot::loadMotor] A motor found in smurf";}
+        //configmaps::ConfigMap sensorMap = it->children;
+        //smurf::Sensor *sensor = new Sensor(sensorMap["name"], sensorMap["type"], sensorMap["taskInstanceName"], getFrameByName(sensorMap["link"]));
+        //sensors.push_back(sensor);
+    }
+}
+
 void smurf::Robot::loadFromSmurf(const std::string& path)
 {
     // parse joints from model
