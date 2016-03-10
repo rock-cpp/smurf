@@ -33,6 +33,11 @@ namespace smurf
             return joints;
         };
         
+        const std::vector<smurf::Motor *> & getMotors() const
+        {
+            return motors;
+        };
+        
         const std::vector<smurf::Sensor *> & getSensors() const
         {
             return sensors;

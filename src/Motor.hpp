@@ -10,8 +10,11 @@ namespace smurf{
     public:
         Motor(configmaps::ConfigMap motorMap);
         
+        std::string getName(){ return this->name; }
+        
     protected:
         mars::interfaces::MotorData marsMotor;
+        std::string name;
     };
     
 }

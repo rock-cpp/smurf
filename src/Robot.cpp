@@ -219,7 +219,7 @@ void smurf::Robot::loadMotors()
         configmaps::ConfigMap motorMap = it->children;
         smurf::Motor *motor = new Motor(motorMap);
         motors.push_back(motor);
-        if (debug) { LOG_DEBUG_S << " [smurf::Robot::loadMotor] A motor found with name: " << static_cast<std::string>(motorMap["name"]) ;}
+        if (debug) { LOG_DEBUG_S << " [smurf::Robot::loadMotor] A motor found with name: " << motor->getName() ;}
     }
 }
 
