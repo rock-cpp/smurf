@@ -9,7 +9,6 @@
 #include "RotationalJoint.hpp"
 #include "TranslationalJoint.hpp"
 
-
 std::string checkGet(configmaps::ConfigMap &map, const std::string &key)
 {
     auto it = map.find(key);
@@ -215,13 +214,12 @@ void smurf::Robot::loadJoints()
 
 void smurf::Robot::loadMotors()
 {
-    if (debug) { LOG_DEBUG_S << " [smurf::Robot::loadMotor] Called loadMotors";}
     for (configmaps::ConfigVector::iterator it = smurfMap["motors"].begin(); it != smurfMap["motors"].end(); ++it) 
     {
-        if (debug) { LOG_DEBUG_S << " [smurf::Robot::loadMotor] A motor found in smurf";}
-        //configmaps::ConfigMap sensorMap = it->children;
-        //smurf::Sensor *sensor = new Sensor(sensorMap["name"], sensorMap["type"], sensorMap["taskInstanceName"], getFrameByName(sensorMap["link"]));
-        //sensors.push_back(sensor);
+        configmaps::ConfigMap motorMap = it->children;
+        smurf::Motor *motor = new Motor(motorMap);
+        motors.push_back(motor);
+        if (debug) { LOG_DEBUG_S << " [smurf::Robot::loadMotor] A motor found with name: " << static_cast<std::string>(motorMap["name"]) ;}
     }
 }
 
@@ -262,8 +260,5 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
     }
     loadCollidables();
     loadInertials();
+    loadMotors();
 }
-
-
-
-

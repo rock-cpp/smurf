@@ -7,21 +7,11 @@ namespace smurf{
     
     class Motor
     {
-        Motor(configmaps::ConfigMap motorData);
+    public:
+        Motor(configmaps::ConfigMap motorMap);
         
     protected:
-        
         mars::interfaces::MotorData marsMotor;
-        //std::string joint;
-        //std::string name;
-        //std::string type;
-        //double p;
-        //double i; 
-        //double d; 
-        //double maxEffort; 
-        //double maxSpeed;
-        //double maxValue;
-        //double minValue;
     };
     
 }

@@ -10,7 +10,9 @@
 using namespace std;
 
 //const string path="./sample_smurfs/two_boxes_joined/smurf/two_boxes.smurf";
-const string path="./sample_smurfs/two_boxes_joined/smurf/two_boxes_dynamic_joint.smurf";
+//const string path="./sample_smurfs/two_boxes_joined/smurf/two_boxes_dynamic_joint.smurf";
+const string path="./sample_smurfs/two_boxes_joined/smurf/two_boxes_with_motor.smurf";
+//const string path="./sample_smurfs/asguard_v4/smurf/asguard_v4.smurf";
 // Test has to be run from test folder otherwise the smurf document won't be found
 
 BOOST_AUTO_TEST_CASE(test_load_from_smurf)
@@ -75,6 +77,5 @@ BOOST_AUTO_TEST_CASE(test_load_motors)
     boost::shared_ptr<urdf::ModelInterface> model = smurf_parser::parseFile(&map, filepath.parent_path().generic_string(), filepath.filename().generic_string(), true);
     smurf::Robot robot;
     robot.loadFromSmurf(path);
-    robot.loadMotors(); // This one already loads the collidables and the inertials
-    
+    robot.loadMotors();
 }

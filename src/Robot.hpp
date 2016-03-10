@@ -5,6 +5,7 @@
 #include "DynamicTransformation.hpp"
 #include "Joint.hpp"
 #include "Sensor.hpp"
+#include "Motor.hpp"
 #include <configmaps/ConfigData.h>
 
 #include <mars/interfaces/contact_params.h>
@@ -106,6 +107,7 @@ namespace smurf
         std::vector<smurf::DynamicTransformation *> dynamicTransforms;
         std::vector<smurf::Joint *> joints;
         std::vector<smurf::Sensor *> sensors;
+        std::vector<smurf::Motor *> motors;
         
         const bool debug = true;
     };

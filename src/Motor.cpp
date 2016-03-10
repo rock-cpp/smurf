@@ -1,6 +1,8 @@
 #include "Motor.hpp"
 
-smurf::Motor::Motor(configmaps::ConfigMap motorData)
+smurf::Motor::Motor(configmaps::ConfigMap motorMap)
 {
-    marsMotor.fromConfigMap(motorData);
+    marsMotor = mars::interfaces::MotorData();
+    std::string prefix = "";
+    marsMotor.fromConfigMap(&motorMap, prefix);
 }
