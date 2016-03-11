@@ -2,8 +2,6 @@
 
 smurf::Motor::Motor(configmaps::ConfigMap motorMap)
 {
-    marsMotor = mars::interfaces::MotorData();
-    std::string prefix = "";
-    marsMotor.fromConfigMap(&motorMap, prefix);
+    motorMap = motorMap;
     name = static_cast<std::string>(motorMap["name"]);
 }

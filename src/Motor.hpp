@@ -1,7 +1,6 @@
 #ifndef MOTOR_H
 #define MOTOR_H
 #include <configmaps/ConfigData.h>
-#include <mars/interfaces/MotorData.h>
 
 namespace smurf{
     
@@ -12,8 +11,10 @@ namespace smurf{
         
         std::string getName(){ return this->name; }
         
+        configmaps::ConfigMap getMotorMap(){ return this->motorMap; }
+        
     protected:
-        mars::interfaces::MotorData marsMotor;
+        configmaps::ConfigMap motorMap;
         std::string name;
     };
     
