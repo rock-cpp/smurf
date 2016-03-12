@@ -1,7 +1,7 @@
 #include "Motor.hpp"
 
-smurf::Motor::Motor(configmaps::ConfigMap motorMap)
+smurf::Motor::Motor(configmaps::ConfigMap map)
 {
-    motorMap = motorMap;
-    name = static_cast<std::string>(motorMap["name"]);
+    motorMap = map;
+    name = static_cast<std::string>(map["name"]);
 }

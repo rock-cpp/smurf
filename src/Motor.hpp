@@ -7,7 +7,7 @@ namespace smurf{
     class Motor
     {
     public:
-        Motor(configmaps::ConfigMap motorMap);
+        Motor(configmaps::ConfigMap map);
         
         std::string getName(){ return this->name; }
         

@@ -65,7 +65,9 @@ BOOST_AUTO_TEST_CASE(test_load_collidables)
     configmaps::ConfigMap map;
     // parse joints from model
     boost::filesystem::path filepath(path);
-    boost::shared_ptr<urdf::ModelInterface> model = smurf_parser::parseFile(&map, filepath.parent_path().generic_string(), filepath.filename().generic_string(), true);
+    boost::shared_ptr<urdf::ModelInterface> model =
+        smurf_parser::parseFile(&map, filepath.parent_path().generic_string(),
+                filepath.filename().generic_string(), true);
     smurf::Robot robot;
     robot.loadFromSmurf(path); // This one already loads the collidables and the inertials
 }    
@@ -74,8 +76,19 @@ BOOST_AUTO_TEST_CASE(test_load_motors)
 {
     configmaps::ConfigMap map;
     boost::filesystem::path filepath(path);
-    boost::shared_ptr<urdf::ModelInterface> model = smurf_parser::parseFile(&map, filepath.parent_path().generic_string(), filepath.filename().generic_string(), true);
+    boost::shared_ptr<urdf::ModelInterface> model =
+        smurf_parser::parseFile(&map, filepath.parent_path().generic_string(),
+                filepath.filename().generic_string(), true);
     smurf::Robot robot;
     robot.loadFromSmurf(path);
-    robot.loadMotors();
+    std::vector<smurf::Motor *> motors = robot.getMotors();
+    std::cout << motors.size() << std::endl;
+    for(smurf::Motor* motor : motors)
+    {
+        std::cout << "Motor name is " << motor->getName() << std::endl;
+        configmaps::ConfigMap map = motor -> getMotorMap();
+        std::string mapString = map.toYamlString();
+        std::cout << "String from map: " << mapString << std::endl;
+
+    }
 }
