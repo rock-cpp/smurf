@@ -233,12 +233,19 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
     model = smurf_parser::parseFile(&smurfMap, filepath.parent_path().generic_string(), filepath.filename().generic_string(), true);
     
     //first we need to create all Frames
-    for (configmaps::ConfigVector::iterator it = smurfMap["frames"].begin(); it != smurfMap["frames"].end(); ++it) 
+    
+    const std::string frameKey("frames");
+    
+    if(smurfMap.hasKey(frameKey))
     {
-        configmaps::ConfigMap &fr(it->children);
+        std::cout << "Loading Frames " << std::endl;
+        for (configmaps::ConfigVector::iterator it = smurfMap[frameKey].begin(); it != smurfMap[frameKey].end(); ++it) 
+        {
+            configmaps::ConfigMap &fr(it->children);
 
-        Frame *frame = new Frame(fr["name"]);
-        availableFrames.push_back(frame);
+            Frame *frame = new Frame(fr["name"]);
+            availableFrames.push_back(frame);
+        }
     }
     
     for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
