@@ -87,6 +87,8 @@ namespace smurf
         
         void loadMotors();
         
+        void loadSensors();
+        
         /**
          * Loads all the information from the Smurf model in the Robot 
          * object.

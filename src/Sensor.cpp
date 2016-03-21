@@ -12,6 +12,15 @@ smurf::Sensor::Sensor(const std::string &name, const std::string &type, const st
     this->attachmentPoint=inFrame;
 }
 
+smurf::Sensor::Sensor(const std::string &name, const std::string &type, const std::string &taskInstanceName, Frame *inFrame, configmaps::ConfigMap sensorMap)
+{
+    this->name=name;
+    this->type=type;
+    this->taskInstanceName=taskInstanceName;
+    this->attachmentPoint=inFrame;
+    this->map = sensorMap;
+}
+        
 std::string smurf::Sensor::getName()
 {
     return this->name;

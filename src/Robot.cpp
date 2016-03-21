@@ -223,6 +223,18 @@ void smurf::Robot::loadMotors()
     }
 }
 
+void smurf::Robot::loadSensors()
+{
+    // parse sensors from map
+    for (configmaps::ConfigVector::iterator it = smurfMap["sensors"].begin(); it != smurfMap["sensors"].end(); ++it) 
+    {
+        configmaps::ConfigMap sensorMap = it->children;
+        smurf::Sensor *sensor = new Sensor(sensorMap["name"], sensorMap["type"], sensorMap["taskInstanceName"], getFrameByName(sensorMap["link"]), sensorMap);
+        sensors.push_back(sensor);
+    }
+    
+}
+
 void smurf::Robot::loadFromSmurf(const std::string& path)
 {
     // parse joints from model
@@ -250,14 +262,7 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
     }
 
     loadJoints(); 
-    
-    // parse sensors from map
-    for (configmaps::ConfigVector::iterator it = smurfMap["sensors"].begin(); it != smurfMap["sensors"].end(); ++it) 
-    {
-        configmaps::ConfigMap sensorMap = it->children;
-        smurf::Sensor *sensor = new Sensor(sensorMap["name"], sensorMap["type"], sensorMap["taskInstanceName"], getFrameByName(sensorMap["link"]));
-        sensors.push_back(sensor);
-    }
+    loadSensors();
     loadCollidables();
     loadInertials();
     loadMotors();
