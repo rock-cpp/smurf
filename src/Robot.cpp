@@ -15,7 +15,6 @@ std::string checkGet(configmaps::ConfigMap &map, const std::string &key)
     auto it = map.find(key);
     if(it == map.end())
     {
-        return std::string();
         throw std::runtime_error("Smurf:: Error, could not find key " + key + " in config map");
     }
     
@@ -122,13 +121,17 @@ void smurf::Robot::loadJoints()
 
         //TODO this might not be set in some cases, perhaps force a check
         configmaps::ConfigMap annotations;
-        for(configmaps::ConfigItem &cv : smurfMap["joints"])
+        bool foundAnnotation = false;
+        for(configmaps::ConfigItem &cv : smurfMap["joint_tasks"])
         {
             if(static_cast<std::string>(cv.children["name"]) == joint->name)
             {
                 annotations = cv.children;
+                foundAnnotation = true;
+                break;
             }
         }
+        
         switch(joint->type)
         {
           case urdf::Joint::FIXED:
@@ -143,6 +146,11 @@ void smurf::Robot::loadJoints()
             break;
             case urdf::Joint::FLOATING:
             {
+                if(!foundAnnotation)
+                {
+                    throw std::runtime_error("Could not find annotation for joint " + joint->name);
+                }
+
                 DynamicTransformation *transform = new DynamicTransformation(source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"));
                 dynamicTransforms.push_back(transform);
                 Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
@@ -164,6 +172,11 @@ void smurf::Robot::loadJoints()
             case urdf::Joint::CONTINUOUS:
             case urdf::Joint::PRISMATIC:
             {
+                if(!foundAnnotation)
+                {
+                    throw std::runtime_error("Could not find annotation for joint " + joint->name);
+                }
+                
                 base::JointState minState;
                 minState.position = joint->limits->lower;
                 minState.effort = 0;
