@@ -120,8 +120,6 @@ BOOST_AUTO_TEST_CASE(test_get_rootFrame)
     smurf::Robot robot;
     robot.loadFromSmurf(path);
     const smurf::Frame * rootFrame = robot.getRootFrame();
-    std::cout << "RootFrame obtained: " << std::endl;
     const std::string rootFrameName = rootFrame->getName();
-    std::cout << "Root Frame name: " << rootFrameName << std::endl;
     BOOST_CHECK(rootFrameName == "root");
 }
