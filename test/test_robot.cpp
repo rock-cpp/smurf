@@ -113,3 +113,15 @@ BOOST_AUTO_TEST_CASE(test_load_sensors)
         std::cout << "String from map: " << mapString << std::endl;
     }
 }
+
+BOOST_AUTO_TEST_CASE(test_get_rootFrame)
+{
+    const string path="./sample_smurfs/two_boxes_joined/smurf/two_boxes_with_sensor.smurf";
+    smurf::Robot robot;
+    robot.loadFromSmurf(path);
+    const smurf::Frame * rootFrame = robot.getRootFrame();
+    std::cout << "RootFrame obtained: " << std::endl;
+    const std::string rootFrameName = rootFrame->getName();
+    std::cout << "Root Frame name: " << rootFrameName << std::endl;
+    BOOST_CHECK(rootFrameName == "root");
+}

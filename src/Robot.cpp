@@ -235,21 +235,24 @@ void smurf::Robot::loadSensors()
     
 }
 
-void smurf::Robot::loadFromSmurf(const std::string& path)
+void smurf::Robot::loadFrames(boost::shared_ptr< urdf::ModelInterface > model)
 {
-    // parse joints from model
-    boost::filesystem::path filepath(path);
-    model = smurf_parser::parseFile(&smurfMap, filepath.parent_path().generic_string(), filepath.filename().generic_string(), true);
-    
-    //first we need to create all Frames
-    for (configmaps::ConfigVector::iterator it = smurfMap["frames"].begin(); it != smurfMap["frames"].end(); ++it) 
+    boost::shared_ptr<const urdf::Link> root = model->getRoot();
+    const std::string rootName = root->name;
+    for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
     {
-        configmaps::ConfigMap &fr(it->children);
-
-        Frame *frame = new Frame(fr["name"]);
+        Frame *frame = new Frame(link.first);
         availableFrames.push_back(frame);
+        if (frame->getName() == rootName)
+        {
+            if (debug){LOG_DEBUG_S << "[smurf::Robot::LoadFrames] Found the root frame: " << root->name;}
+            rootFrame = frame;
+        }
     }
-    
+}
+
+void smurf::Robot::loadVisuals()
+{
     for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
     {
         Frame *frame = new Frame(link.first);
@@ -257,10 +260,16 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
         {
             frame->addVisual(*visual);
         }
-        availableFrames.push_back(frame);
-        
     }
+}
 
+void smurf::Robot::loadFromSmurf(const std::string& path)
+{    
+    // Load model from file
+    boost::filesystem::path filepath(path);
+    model = smurf_parser::parseFile(&smurfMap, filepath.parent_path().generic_string(), filepath.filename().generic_string(), true);
+    loadFrames(model); //NOTE Sets also the root frame
+    loadVisuals();
     loadJoints(); 
     loadSensors();
     loadCollidables();

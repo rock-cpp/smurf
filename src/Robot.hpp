@@ -89,6 +89,10 @@ namespace smurf
         
         void loadSensors();
         
+        void loadVisuals();
+
+        void loadFrames(boost::shared_ptr< urdf::ModelInterface > model);
+        
         /**
          * Loads all the information from the Smurf model in the Robot 
          * object.
