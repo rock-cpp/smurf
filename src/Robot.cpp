@@ -255,7 +255,7 @@ void smurf::Robot::loadVisuals()
 {
     for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
     {
-        Frame *frame = new Frame(link.first);
+        Frame *frame = getFrameByName(link.second->name);
         for(boost::shared_ptr<urdf::Visual> visual : link.second->visual_array)
         {
             frame->addVisual(*visual);
