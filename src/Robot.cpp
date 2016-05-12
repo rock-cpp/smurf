@@ -133,7 +133,7 @@ void smurf::Robot::loadJoints()
           case urdf::Joint::FIXED:
             {
                 const urdf::Pose &tr(joint->parent_to_joint_origin_transform);     
-                StaticTransformation *transform = new StaticTransformation(source, target,
+                StaticTransformation *transform = new StaticTransformation(joint->name, source, target,
                                                                            Eigen::Quaterniond(tr.rotation.w, tr.rotation.x, tr.rotation.y, tr.rotation.z),
                                                                            Eigen::Vector3d(tr.position.x, tr.position.y, tr.position.z));              
                 if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadJoint] Pushing back the statict transformation for the fixed joint" << joint->name;}
@@ -142,7 +142,7 @@ void smurf::Robot::loadJoints()
             break;
             case urdf::Joint::FLOATING:
             {
-                DynamicTransformation *transform = new DynamicTransformation(source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"));
+                DynamicTransformation *transform = new DynamicTransformation(joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"));
                 dynamicTransforms.push_back(transform);
                 Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
                 Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
@@ -155,7 +155,7 @@ void smurf::Robot::loadJoints()
                 parentToOriginAff.setIdentity();
                 parentToOriginAff.rotate(rot);
                 parentToOriginAff.translation() = trans;
-                Joint *smurfJoint = new Joint (source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, parentToOriginAff, joint); 
+                Joint *smurfJoint = new Joint (joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, parentToOriginAff, joint); 
                 joints.push_back(smurfJoint);
             }
             break;
@@ -193,11 +193,11 @@ void smurf::Robot::loadJoints()
                 parentToOriginAff.translation() = trans;
                 if(joint->type == urdf::Joint::REVOLUTE || joint->type == urdf::Joint::CONTINUOUS)
                 {
-                    transform = new RotationalJoint(source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
+                    transform = new RotationalJoint(joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
                 }
                 else
                 {
-                    transform = new TranslationalJoint(source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
+                    transform = new TranslationalJoint(joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
                 }
                 smurfJoint = (Joint *)transform;
                 if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadJoint] Pushing back the dynamic transformation for revolute or continuous joint" << joint->name;}

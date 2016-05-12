@@ -11,7 +11,7 @@ namespace smurf
     {
     public:
         
-        Transformation(Frame *sourceFrame, Frame *targetFrame);
+        Transformation(const std::string &name, Frame *sourceFrame, Frame *targetFrame);
         
         const Frame &getSourceFrame() const
         {
