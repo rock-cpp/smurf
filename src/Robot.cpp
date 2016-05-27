@@ -10,6 +10,12 @@
 #include "TranslationalJoint.hpp"
 
 
+smurf::Robot::Robot()
+{
+    smurfMap = new configmaps::ConfigMap();
+}
+
+
 std::string checkGet(configmaps::ConfigMap &map, const std::string &key)
 {
     auto it = map.find(key);
@@ -39,8 +45,8 @@ const mars::interfaces::contact_params smurf::Robot::getContactParams(const std:
     mars::interfaces::contact_params result;
     result.setZero();
     bool found = false;
-    configmaps::ConfigVector::iterator it = smurfMap["collision"].begin();
-    while ((! found) and (it != smurfMap["collision"].end()))
+    configmaps::ConfigVector::iterator it = (*smurfMap)["collision"].begin();
+    while ((! found) and (it != (*smurfMap)["collision"].end()))
     {
         configmaps::ConfigMap &collidableMap(it->children);
         std::string name = static_cast<std::string>(collidableMap["name"]);
@@ -122,7 +128,7 @@ void smurf::Robot::loadJoints()
         //TODO this might not be set in some cases, perhaps force a check
         configmaps::ConfigMap annotations;
         bool foundAnnotation = false;
-        for(configmaps::ConfigItem &cv : smurfMap["joint_tasks"])
+        for(configmaps::ConfigItem &cv : (*smurfMap)["joint_tasks"])
         {
             if(static_cast<std::string>(cv.children["name"]) == joint->name)
             {
@@ -230,16 +236,16 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
 {
     // parse joints from model
     boost::filesystem::path filepath(path);
-    model = smurf_parser::parseFile(&smurfMap, filepath.parent_path().generic_string(), filepath.filename().generic_string(), true);
+    model = smurf_parser::parseFile(smurfMap, filepath.parent_path().generic_string(), filepath.filename().generic_string(), true);
     
     //first we need to create all Frames
     
     const std::string frameKey("frames");
     
-    if(smurfMap.hasKey(frameKey))
+    if(smurfMap->hasKey(frameKey))
     {
         std::cout << "Loading Frames " << std::endl;
-        for (configmaps::ConfigVector::iterator it = smurfMap[frameKey].begin(); it != smurfMap[frameKey].end(); ++it) 
+        for (configmaps::ConfigVector::iterator it = (*smurfMap)[frameKey].begin(); it != (*smurfMap)[frameKey].end(); ++it) 
         {
             configmaps::ConfigMap &fr(it->children);
 
@@ -262,7 +268,7 @@ void smurf::Robot::loadFromSmurf(const std::string& path)
     loadJoints(); 
     
     // parse sensors from map
-    for (configmaps::ConfigVector::iterator it = smurfMap["sensors"].begin(); it != smurfMap["sensors"].end(); ++it) 
+    for (configmaps::ConfigVector::iterator it = (*smurfMap)["sensors"].begin(); it != (*smurfMap)["sensors"].end(); ++it) 
     {
         configmaps::ConfigMap sensorMap = it->children;
         smurf::Sensor *sensor = new Sensor(sensorMap["name"], sensorMap["type"], sensorMap["taskInstanceName"], getFrameByName(sensorMap["link"]));

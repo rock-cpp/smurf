@@ -5,9 +5,12 @@
 #include "DynamicTransformation.hpp"
 #include "Joint.hpp"
 #include "Sensor.hpp"
-#include <configmaps/ConfigData.h>
-
 #include <mars/interfaces/contact_params.h>
+
+namespace configmaps
+{
+    class ConfigMap;
+};
 
 namespace smurf
 {
@@ -15,7 +18,7 @@ namespace smurf
     {
     public:
         
-        Robot(){};
+        Robot();
         
         const std::vector<smurf::StaticTransformation *> & getStaticTransforms() const
         {
@@ -97,7 +100,7 @@ namespace smurf
         
         Frame *rootFrame;
         boost::shared_ptr<urdf::ModelInterface> model;
-        configmaps::ConfigMap smurfMap;
+        configmaps::ConfigMap *smurfMap;
         
         std::vector<smurf::Frame *> availableFrames;
         std::vector<smurf::StaticTransformation *> staticTransforms;
