@@ -10,13 +10,18 @@
 
 #include <mars/interfaces/contact_params.h>
 
+namespace configmaps
+{
+    class ConfigMap;
+};
+
 namespace smurf
 {
     class Robot
     {
     public:
         
-        Robot(){};
+        Robot();
         
         const std::vector<smurf::StaticTransformation *> & getStaticTransforms() const
         {
@@ -111,7 +116,7 @@ namespace smurf
         
         Frame *rootFrame;
         boost::shared_ptr<urdf::ModelInterface> model;
-        configmaps::ConfigMap smurfMap;
+        configmaps::ConfigMap *smurfMap;
         
         std::vector<smurf::Frame *> availableFrames;
         std::vector<smurf::StaticTransformation *> staticTransforms;
@@ -120,7 +125,7 @@ namespace smurf
         std::vector<smurf::Sensor *> sensors;
         std::vector<smurf::Motor *> motors;
         
-        const bool debug = true;
+        const bool debug = false;
     };
 };
 #endif // SMURF_H
