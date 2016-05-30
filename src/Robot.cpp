@@ -42,7 +42,7 @@ const mars::interfaces::contact_params smurf::Robot::getContactParams(const std:
     configmaps::ConfigVector::iterator it = smurfMap["collision"].begin();
     while ((! found) and (it != smurfMap["collision"].end()))
     {
-        configmaps::ConfigMap &collidableMap(it->children);
+        configmaps::ConfigMap &collidableMap(*it);
         std::string name = static_cast<std::string>(collidableMap["name"]);
         std::string link = static_cast<std::string>(collidableMap["link"]);
         if ((name == collisionName) and (linkName == link))
@@ -123,9 +123,9 @@ void smurf::Robot::loadJoints()
         configmaps::ConfigMap annotations;
         for(configmaps::ConfigItem &cv : smurfMap["joints"])
         {
-            if(static_cast<std::string>(cv.children["name"]) == joint->name)
+            if(static_cast<std::string>(cv["name"]) == joint->name)
             {
-                annotations = cv.children;
+                annotations = cv;
             }
         }
         switch(joint->type)
@@ -216,7 +216,7 @@ void smurf::Robot::loadMotors()
 {
     for (configmaps::ConfigVector::iterator it = smurfMap["motors"].begin(); it != smurfMap["motors"].end(); ++it) 
     {
-        configmaps::ConfigMap motorMap = it->children;
+        configmaps::ConfigMap motorMap = *it;
         smurf::Motor *motor = new Motor(motorMap);
         motors.push_back(motor);
         if (debug) { LOG_DEBUG_S << " [smurf::Robot::loadMotor] A motor found with name: " << motor->getName() ;}
@@ -228,7 +228,7 @@ void smurf::Robot::loadSensors()
     // parse sensors from map
     for (configmaps::ConfigVector::iterator it = smurfMap["sensors"].begin(); it != smurfMap["sensors"].end(); ++it) 
     {
-        configmaps::ConfigMap sensorMap = it->children;
+        configmaps::ConfigMap sensorMap = *it;
         smurf::Sensor *sensor = new Sensor(sensorMap["name"], sensorMap["type"], sensorMap["taskInstanceName"], getFrameByName(sensorMap["link"]), sensorMap);
         sensors.push_back(sensor);
     }
