@@ -3,7 +3,6 @@
 #include <boost/filesystem.hpp>
 #include <smurf_parser/SMURFParser.h>
 #include <base/Logging.hpp>
-#include <configmaps/ConfigData.h>
 
 #include "Frame.hpp"
 #include "RotationalJoint.hpp"
@@ -114,28 +113,33 @@ void smurf::Robot::loadInertials()
     }
 }
 
+configmaps::ConfigMap smurf::Robot::getAnnotations(const boost::shared_ptr<urdf::Joint>& joint)
+{
+    bool foundAnnotation = false;
+    configmaps::ConfigMap annotations;
+    for(configmaps::ConfigItem &cv : (*smurfMap)["joint_tasks"])
+    {
+        if(static_cast<std::string>((cv)["name"]) == joint->name)
+        {
+            annotations = cv;
+            foundAnnotation = true;
+            break;
+        }
+    }    
+    if(!foundAnnotation)
+    {
+        throw std::runtime_error("Could not find annotation for joint " + joint->name);
+    }
+    return annotations;
+}
+
 void smurf::Robot::loadJoints()
 {
     for(std::pair<std::string, boost::shared_ptr<urdf::Joint> > jointIt: model->joints_)
     {
-
         boost::shared_ptr<urdf::Joint> joint = jointIt.second;
-        
         Frame *source = getFrameByName(joint->parent_link_name);
         Frame *target = getFrameByName(joint->child_link_name);
-
-        //TODO this might not be set in some cases, perhaps force a check
-        configmaps::ConfigMap annotations;
-        bool foundAnnotation = false;
-        for(configmaps::ConfigItem &cv : (*smurfMap)["joints"])
-        {
-            if(static_cast<std::string>((cv)["name"]) == joint->name)
-            {
-                annotations = cv;
-                foundAnnotation = true;
-                break;
-            }
-        }    
         switch(joint->type)
         {
           case urdf::Joint::FIXED:
@@ -150,11 +154,8 @@ void smurf::Robot::loadJoints()
             break;
             case urdf::Joint::FLOATING:
             {
-                if(!foundAnnotation)
-                {
-                    throw std::runtime_error("Could not find annotation for joint " + joint->name);
-                }
-				DynamicTransformation *transform = new DynamicTransformation(joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"));
+                configmaps::ConfigMap annotations = getAnnotations(joint);
+                DynamicTransformation *transform = new DynamicTransformation(joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"));
                 dynamicTransforms.push_back(transform);
                 Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
                 Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
@@ -175,11 +176,7 @@ void smurf::Robot::loadJoints()
             case urdf::Joint::CONTINUOUS:
             case urdf::Joint::PRISMATIC:
             {
-                if(!foundAnnotation)
-                {
-                    throw std::runtime_error("Could not find annotation for joint " + joint->name);
-                }
-                
+                configmaps::ConfigMap annotations = getAnnotations(joint);
                 base::JointState minState;
                 minState.position = joint->limits->lower;
                 minState.effort = 0;

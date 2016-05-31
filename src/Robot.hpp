@@ -113,6 +113,8 @@ namespace smurf
     protected:
         
         Frame *getFrameByName(const std::string &name);
+
+        configmaps::ConfigMap getAnnotations(const boost::shared_ptr<urdf::Joint> &joint);
         
         Frame *rootFrame;
         boost::shared_ptr<urdf::ModelInterface> model;
