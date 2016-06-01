@@ -12,6 +12,7 @@ rock_library(smurf
             StaticTransformation.cpp
             Transformation.cpp
             TranslationalJoint.cpp
+            Motor.cpp
     HEADERS Robot.hpp
             Collidable.hpp
             DynamicTransformation.hpp
@@ -24,6 +25,7 @@ rock_library(smurf
             Transformation.hpp
             TranslationalJoint.hpp
             Smurf.hpp
+            Motor.hpp
     DEPS_PKGCONFIG
         base-types
         configmaps

@@ -11,6 +11,8 @@ namespace smurf
     public:
         StaticTransformation(Frame* sourceFrame, Frame* targetFrame, const Eigen::Affine3d &sourceToTarget);
         StaticTransformation(Frame* sourceFrame, Frame* targetFrame, const Eigen::Quaterniond &rotation, const Eigen::Vector3d &translation);
+        StaticTransformation(const std::string &name, Frame* sourceFrame, Frame* targetFrame, const Eigen::Affine3d &sourceToTarget);
+        StaticTransformation(const std::string &name, Frame* sourceFrame, Frame* targetFrame, const Eigen::Quaterniond &rotation, const Eigen::Vector3d &translation);
         
         const Eigen::Affine3d &getTransformation() const;
         

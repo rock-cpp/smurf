@@ -9,8 +9,10 @@ namespace smurf
     class DynamicTransformation : public Transformation
     {
     public:
-        DynamicTransformation(Frame *sourceFrame, Frame *targetFrame, const std::string &provider, const std::string &port);
+        DynamicTransformation(const std::string &name, Frame *sourceFrame, Frame *targetFrame, const std::string &provider, const std::string &port);
         
+        DynamicTransformation(Frame *sourceFrame, Frame *targetFrame, const std::string &provider, const std::string &port);
+
         const std::string &getProviderName() const
         {
             return providerName;

@@ -5,6 +5,9 @@
 #include "DynamicTransformation.hpp"
 #include "Joint.hpp"
 #include "Sensor.hpp"
+#include "Motor.hpp"
+#include <configmaps/ConfigData.h>
+
 #include <mars/interfaces/contact_params.h>
 
 namespace configmaps
@@ -33,6 +36,11 @@ namespace smurf
         const std::vector<smurf::Joint *> & getJoints() const
         {
             return joints;
+        };
+        
+        const std::vector<smurf::Motor *> & getMotors() const
+        {
+            return motors;
         };
         
         const std::vector<smurf::Sensor *> & getSensors() const
@@ -82,6 +90,14 @@ namespace smurf
          */
         void loadJoints();
         
+        void loadMotors();
+        
+        void loadSensors();
+        
+        void loadVisuals();
+
+        void loadFrames(boost::shared_ptr< urdf::ModelInterface > model);
+        
         /**
          * Loads all the information from the Smurf model in the Robot 
          * object.
@@ -97,6 +113,8 @@ namespace smurf
     protected:
         
         Frame *getFrameByName(const std::string &name);
+
+        configmaps::ConfigMap getAnnotations(const boost::shared_ptr<urdf::Joint> &joint);
         
         Frame *rootFrame;
         boost::shared_ptr<urdf::ModelInterface> model;
@@ -107,6 +125,7 @@ namespace smurf
         std::vector<smurf::DynamicTransformation *> dynamicTransforms;
         std::vector<smurf::Joint *> joints;
         std::vector<smurf::Sensor *> sensors;
+        std::vector<smurf::Motor *> motors;
         
         const bool debug = false;
     };
