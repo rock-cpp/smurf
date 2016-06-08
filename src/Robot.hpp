@@ -23,6 +23,8 @@ namespace smurf
         
         Robot();
         
+        ~Robot();
+        
         const std::vector<smurf::StaticTransformation *> & getStaticTransforms() const
         {
             return staticTransforms;

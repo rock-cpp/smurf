@@ -13,6 +13,10 @@ smurf::Robot::Robot()
     smurfMap = new configmaps::ConfigMap();
 }
 
+smurf::Robot::~Robot()
+{
+
+}
 
 std::string checkGet(configmaps::ConfigMap &map, const std::string &key)
 {
