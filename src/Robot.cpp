@@ -2,7 +2,7 @@
 
 #include <boost/filesystem.hpp>
 #include <smurf_parser/SMURFParser.h>
-#include <base/Logging.hpp>
+#include <base-logging/Logging.hpp>
 
 #include "Frame.hpp"
 #include "RotationalJoint.hpp"
