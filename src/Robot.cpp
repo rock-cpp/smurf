@@ -78,10 +78,10 @@ void smurf::Robot::loadCollidables()
 {
 
     if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadCollidables] Loading collidables just started ";}
-    for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
+    for(std::pair<std::string, std::shared_ptr<urdf::Link>> link: model->links_)
     {
         smurf::Frame* frame = getFrameByName(link.first);
-        for(boost::shared_ptr<urdf::Collision> collision : link.second->collision_array)
+        for(std::shared_ptr<urdf::Collision> collision : link.second->collision_array)
         {
             // Find the correspondent collidable data if exists and create the collidable object
             smurf::Collidable* collidable = new Collidable(collision->name, getContactParams(collision->name, link.first), *collision );
@@ -92,10 +92,10 @@ void smurf::Robot::loadCollidables()
 
 void smurf::Robot::loadCollisions()
 {
-    for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
+    for(std::pair<std::string, std::shared_ptr<urdf::Link>> link: model->links_)
     {
         smurf::Frame* frame = getFrameByName(link.first);
-        for(boost::shared_ptr<urdf::Collision> collision : link.second->collision_array)
+        for(std::shared_ptr<urdf::Collision> collision : link.second->collision_array)
         {
             frame->addCollision(*collision);
         }
@@ -104,7 +104,7 @@ void smurf::Robot::loadCollisions()
 
 void smurf::Robot::loadInertials()
 {
-    for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
+    for(std::pair<std::string, std::shared_ptr<urdf::Link>> link: model->links_)
     {
         smurf::Frame* frame = getFrameByName(link.first);
         if (debug) { LOG_DEBUG_S << " [smurf::Robot::loadInertials] Checking for inertials in link with name " << link.first;}
@@ -117,7 +117,7 @@ void smurf::Robot::loadInertials()
     }
 }
 
-configmaps::ConfigMap smurf::Robot::getAnnotations(const boost::shared_ptr<urdf::Joint>& joint)
+configmaps::ConfigMap smurf::Robot::getAnnotations(const std::shared_ptr<urdf::Joint>& joint)
 {
     bool foundAnnotation = false;
     configmaps::ConfigMap annotations;
@@ -139,9 +139,9 @@ configmaps::ConfigMap smurf::Robot::getAnnotations(const boost::shared_ptr<urdf:
 
 void smurf::Robot::loadJoints()
 {
-    for(std::pair<std::string, boost::shared_ptr<urdf::Joint> > jointIt: model->joints_)
+    for(std::pair<std::string, std::shared_ptr<urdf::Joint> > jointIt: model->joints_)
     {
-        boost::shared_ptr<urdf::Joint> joint = jointIt.second;
+        std::shared_ptr<urdf::Joint> joint = jointIt.second;
         Frame *source = getFrameByName(joint->parent_link_name);
         Frame *target = getFrameByName(joint->child_link_name);
         switch(joint->type)
@@ -253,11 +253,11 @@ void smurf::Robot::loadSensors()
     
 }
 
-void smurf::Robot::loadFrames(boost::shared_ptr< urdf::ModelInterface > model)
+void smurf::Robot::loadFrames(std::shared_ptr< urdf::ModelInterface > model)
 {
-    boost::shared_ptr<const urdf::Link> root = model->getRoot();
+    std::shared_ptr<const urdf::Link> root = model->getRoot();
     const std::string rootName = root->name;
-    for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
+    for(std::pair<std::string, std::shared_ptr<urdf::Link>> link: model->links_)
     {
         Frame *frame = new Frame(link.first);
         availableFrames.push_back(frame);
@@ -271,10 +271,10 @@ void smurf::Robot::loadFrames(boost::shared_ptr< urdf::ModelInterface > model)
 
 void smurf::Robot::loadVisuals()
 {
-    for(std::pair<std::string, boost::shared_ptr<urdf::Link>> link: model->links_)
+    for(std::pair<std::string, std::shared_ptr<urdf::Link>> link: model->links_)
     {
         Frame *frame = getFrameByName(link.second->name);
-        for(boost::shared_ptr<urdf::Visual> visual : link.second->visual_array)
+        for(std::shared_ptr<urdf::Visual> visual : link.second->visual_array)
         {
             frame->addVisual(*visual);
         }

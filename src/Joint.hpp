@@ -18,13 +18,13 @@ namespace smurf{
         
         Joint(const std::string &name, Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Affine3d& parentToJointOrigin); 
         
-        Joint(const std::string &name, Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Affine3d& parentToJointOrigin, boost::shared_ptr<urdf::Joint> jointModel); 
+        Joint(const std::string &name, Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Affine3d& parentToJointOrigin, std::shared_ptr<urdf::Joint> jointModel); 
         
         Joint(Frame* sourceFrame, Frame* targetFrame, const std::string &provider, const std::string &port, const std::string &driverName, base::JointLimitRange &limits, const Eigen::Affine3d &sourceToAxis);
         
         Joint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Affine3d& parentToJointOrigin); 
         
-        Joint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Affine3d& parentToJointOrigin, boost::shared_ptr<urdf::Joint> jointModel); 
+        Joint(Frame* sourceFrame, Frame* targetFrame, const std::string& provider, const std::string& port, const std::string& driverName, base::JointLimitRange& limits, const Eigen::Affine3d& sourceToAxis, const Eigen::Affine3d& parentToJointOrigin, std::shared_ptr<urdf::Joint> jointModel); 
 
         const Eigen::Affine3d &getSourceToAxis() const;
         
@@ -32,7 +32,7 @@ namespace smurf{
         
         void setParentToJointOrigin(const Eigen::Affine3d inParentToJointOrigin);
         
-        boost::shared_ptr<urdf::Joint> getJointModel() const;
+        std::shared_ptr<urdf::Joint> getJointModel() const;
         
         
         
@@ -63,7 +63,7 @@ namespace smurf{
          * Urdf data of the joint
          * 
          */
-        boost::shared_ptr<urdf::Joint> jointModel;
+        std::shared_ptr<urdf::Joint> jointModel;
         
     };
     
