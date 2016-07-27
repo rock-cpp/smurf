@@ -98,7 +98,7 @@ namespace smurf
         
         void loadVisuals();
 
-        void loadFrames(boost::shared_ptr< urdf::ModelInterface > model);
+        void loadFrames(std::shared_ptr< urdf::ModelInterface > model);
         
         /**
          * Loads all the information from the Smurf model in the Robot 
@@ -116,10 +116,10 @@ namespace smurf
         
         Frame *getFrameByName(const std::string &name);
 
-        configmaps::ConfigMap getAnnotations(const boost::shared_ptr<urdf::Joint> &joint);
+        configmaps::ConfigMap getAnnotations(const std::shared_ptr<urdf::Joint> &joint);
         
         Frame *rootFrame;
-        boost::shared_ptr<urdf::ModelInterface> model;
+        std::shared_ptr<urdf::ModelInterface> model;
         configmaps::ConfigMap *smurfMap;
         
         std::vector<smurf::Frame *> availableFrames;
