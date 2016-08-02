@@ -11,7 +11,7 @@ smurf::RotationalJoint::RotationalJoint(const std::string name, smurf::Frame* so
                                         const std::string& provider, const std::string& port, 
                                         const std::string& driverName, base::JointLimitRange& limits, 
                                         const Eigen::Affine3d& sourceToAxis, const Eigen::Vector3d& rotationAxis, 
-                                        const Eigen::Affine3d& parentToJointOrigin, std::shared_ptr<urdf::Joint> jointModel): 
+                                        const Eigen::Affine3d& parentToJointOrigin, urdf::JointSharedPtr jointModel):
                                         Joint(name, sourceFrame, targetFrame, provider, port, driverName, limits, sourceToAxis, parentToJointOrigin, jointModel), 
                                         rotationAxis(rotationAxis){}
 
@@ -26,6 +26,6 @@ smurf::RotationalJoint::RotationalJoint(smurf::Frame* sourceFrame, smurf::Frame*
                                         const std::string& provider, const std::string& port, 
                                         const std::string& driverName, base::JointLimitRange& limits, 
                                         const Eigen::Affine3d& sourceToAxis, const Eigen::Vector3d& rotationAxis, 
-                                        const Eigen::Affine3d& parentToJointOrigin, std::shared_ptr<urdf::Joint> jointModel): 
+                                        const Eigen::Affine3d& parentToJointOrigin, urdf::JointSharedPtr jointModel):
                                         Joint(sourceFrame, targetFrame, provider, port, driverName, limits, sourceToAxis, parentToJointOrigin, jointModel), 
                                         rotationAxis(rotationAxis){}

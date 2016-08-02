@@ -21,7 +21,7 @@ smurf::Joint::Joint(const std::string &name, smurf::Frame* sourceFrame, smurf::F
 smurf::Joint::Joint(const std::string &name, smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const std::string& provider, 
                     const std::string& port, const std::string& driverName, base::JointLimitRange& limits, 
                     const Eigen::Affine3d& sourceToAxis, const Eigen::Affine3d& parentToJointOrigin,
-                    std::shared_ptr<urdf::Joint> jointModel): 
+                    urdf::JointSharedPtr jointModel):
                     DynamicTransformation(name, sourceFrame, targetFrame, provider, port), limits(limits), 
                     sourceToAxis(sourceToAxis), parentToJointOrigin(parentToJointOrigin),
                     jointModel(jointModel)
@@ -51,7 +51,7 @@ smurf::Joint::Joint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const 
 smurf::Joint::Joint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const std::string& provider, 
                     const std::string& port, const std::string& driverName, base::JointLimitRange& limits, 
                     const Eigen::Affine3d& sourceToAxis, const Eigen::Affine3d& parentToJointOrigin,
-                    std::shared_ptr<urdf::Joint> jointModel): 
+                    urdf::JointSharedPtr jointModel):
                     DynamicTransformation(sourceFrame, targetFrame, provider, port), limits(limits), 
                     sourceToAxis(sourceToAxis), parentToJointOrigin(parentToJointOrigin),
                     jointModel(jointModel)
@@ -68,7 +68,7 @@ const Eigen::Affine3d& smurf::Joint::getParentToJointOrigin() const
     return this -> parentToJointOrigin;
 };
 
-std::shared_ptr<urdf::Joint> smurf::Joint::getJointModel() const
+urdf::JointSharedPtr smurf::Joint::getJointModel() const
 {
     return this -> jointModel;
 };
