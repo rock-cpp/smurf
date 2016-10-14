@@ -1,4 +1,4 @@
-find_package(Boost)
+find_package(Boost REQUIRED COMPONENTS system)
 
 rock_testsuite(test_suite
     suite.cpp
