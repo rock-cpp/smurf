@@ -123,3 +123,26 @@ BOOST_AUTO_TEST_CASE(test_get_rootFrame)
     const std::string rootFrameName = rootFrame->getName();
     BOOST_CHECK(rootFrameName == "root");
 }
+
+BOOST_AUTO_TEST_CASE(test_get_limits)
+{
+    const string path="./sample_smurfs/two_boxes_joined/smurf/two_boxes_with_motor.smurf";
+    smurf::Robot robot;
+    robot.loadFromSmurf(path);
+    // only one joint
+    const vector<smurf::Joint*> joints = robot.getJoints();
+    BOOST_CHECK(joints.size() == 1);    
+
+    std::pair<double, double> position_limit = joints.at(0)->getPositionLimits();
+    std::pair<double, double> effort_limit = joints.at(0)->getEffortLimits();
+    std::pair<double, double> speed_limit = joints.at(0)->getSpeedLimits();
+
+    BOOST_CHECK(position_limit.first == -0.785398);
+    BOOST_CHECK(position_limit.second == 0.785398);
+
+    BOOST_CHECK(effort_limit.first == 0);
+    BOOST_CHECK(effort_limit.second == 1000);
+
+    BOOST_CHECK(speed_limit.first == 0);
+    BOOST_CHECK(speed_limit.second == 6.28);        
+}
