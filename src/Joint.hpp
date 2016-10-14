@@ -33,8 +33,12 @@ namespace smurf{
         void setParentToJointOrigin(const Eigen::Affine3d inParentToJointOrigin);
         
         urdf::JointSharedPtr getJointModel() const;
-        
-        
+
+        std::pair<double, double> getPositionLimits() const;
+
+        std::pair<double, double> getEffortLimits() const;
+
+        std::pair<double, double> getSpeedLimits() const;
         
     protected:
         

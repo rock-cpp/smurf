@@ -72,3 +72,18 @@ urdf::JointSharedPtr smurf::Joint::getJointModel() const
 {
     return this -> jointModel;
 };
+
+std::pair<double, double> smurf::Joint::getPositionLimits() const
+{
+     return std::pair<double, double>(this->limits.min.position, this->limits.max.position);
+};
+
+std::pair<double, double> smurf::Joint::getEffortLimits() const
+{
+     return std::pair<double, double>(this->limits.min.effort, this->limits.max.effort);
+};
+
+std::pair<double, double> smurf::Joint::getSpeedLimits() const
+{
+     return std::pair<double, double>(this->limits.min.speed, this->limits.max.speed);
+}
