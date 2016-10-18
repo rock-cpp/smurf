@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(test_load_collidables)
     configmaps::ConfigMap map;
     // parse joints from model
     boost::filesystem::path filepath(path);
-    boost::shared_ptr<urdf::ModelInterface> model =
+    urdf::ModelInterfaceSharedPtr model =
         smurf_parser::parseFile(&map, filepath.parent_path().generic_string(),
                 filepath.filename().generic_string(), true);
     smurf::Robot robot;
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(test_load_motors)
 {
     configmaps::ConfigMap map;
     boost::filesystem::path filepath(path);
-    boost::shared_ptr<urdf::ModelInterface> model =
+    urdf::ModelInterfaceSharedPtr model =
         smurf_parser::parseFile(&map, filepath.parent_path().generic_string(),
                 filepath.filename().generic_string(), true);
     smurf::Robot robot;
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(test_load_sensors)
 {
     configmaps::ConfigMap map;
     boost::filesystem::path filepath(path);
-    boost::shared_ptr<urdf::ModelInterface> model =
+    urdf::ModelInterfaceSharedPtr model =
         smurf_parser::parseFile(&map, filepath.parent_path().generic_string(),
                 filepath.filename().generic_string(), true);
     smurf::Robot robot;
