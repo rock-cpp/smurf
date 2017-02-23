@@ -9,7 +9,7 @@ namespace smurf{
     public:
         Motor(configmaps::ConfigMap map);
         
-        std::string getName(){ return this->name; }
+        std::string getName() const { return this->name; }
         
         configmaps::ConfigMap getMotorMap(){ return this->motorMap; }
         
