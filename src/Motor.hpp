@@ -11,7 +11,7 @@ namespace smurf{
         
         std::string getName() const { return this->name; }
         
-        configmaps::ConfigMap getMotorMap(){ return this->motorMap; }
+        configmaps::ConfigMap getMotorMap() const { return this->motorMap; }
         
     protected:
         configmaps::ConfigMap motorMap;
