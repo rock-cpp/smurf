@@ -42,9 +42,9 @@ smurf::Frame* smurf::Robot::getFrameByName(const std::string& name)
     throw std::runtime_error("smurf::Robot::getFrameByName : Error , frame " + name + " is not known" );
 }
 
-const mars::interfaces::contact_params smurf::Robot::getContactParams(const std::string& collisionName, const std::string& linkName)
+const smurf::ContactParams smurf::Robot::getContactParams(const std::string& collisionName, const std::string& linkName)
 {
-    mars::interfaces::contact_params result;
+    ContactParams result;
     result.setZero();
     bool found = false;
     configmaps::ConfigVector::iterator it = (*smurfMap)["collision"].begin();

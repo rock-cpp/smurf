@@ -15,6 +15,7 @@ rock_library(smurf
             Motor.cpp
     HEADERS Robot.hpp
             Collidable.hpp
+            ContactParams.hpp
             DynamicTransformation.hpp
             Frame.hpp
             Inertial.hpp
@@ -31,7 +32,6 @@ rock_library(smurf
         configmaps
         smurf_parser
         base-lib
-		mars_interfaces
     DEPS_PLAIN 
         Boost_FILESYSTEM 
 )

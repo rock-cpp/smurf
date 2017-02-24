@@ -3,14 +3,14 @@
 
 #include <string>
 #include <urdf_model/model.h>
-#include <mars/interfaces/contact_params.h>
+#include "ContactParams.hpp"
 
 namespace smurf{
     
     class Collidable
     {
     public:
-        Collidable(const std::string& name, const mars::interfaces::contact_params contact_params, const urdf::Collision& collision);
+        Collidable(const std::string& name, const ContactParams contact_params, const urdf::Collision& collision);
         std::string getName() const 
         { 
             return this->name; 
@@ -27,7 +27,7 @@ namespace smurf{
         { 
             return this->groupId; 
         }
-        mars::interfaces::contact_params getContactParams() const
+        ContactParams getContactParams() const
         {
             return this->contact_params;
         }
@@ -35,7 +35,7 @@ namespace smurf{
         std::string name;
         urdf::Collision collision;
         int groupId;
-        mars::interfaces::contact_params contact_params;
+        ContactParams contact_params;
     };
     
 };

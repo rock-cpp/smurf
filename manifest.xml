@@ -9,5 +9,4 @@
   <depend package="base/cmake" />
   <depend package="base/types" />
   <depend package="simulation/smurf_parser" />
-  <depend package="simulation/mars/interfaces" />
 </package>

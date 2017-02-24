@@ -6,10 +6,10 @@
 #include "Joint.hpp"
 #include "Sensor.hpp"
 #include "Motor.hpp"
+#include "ContactParams.hpp"
 #include <configmaps/ConfigData.h>
 #include <urdf_world/types.h>
 
-#include <mars/interfaces/contact_params.h>
 
 namespace configmaps
 {
@@ -61,7 +61,7 @@ namespace smurf
             return rootFrame;
         };
 
-        const mars::interfaces::contact_params getContactParams(const std::string& collisionName, const std::string& linkName);
+        const ContactParams getContactParams(const std::string& collisionName, const std::string& linkName);
 
         /**
          * Loads the SMURF Collidable objects in their correspondent frames
