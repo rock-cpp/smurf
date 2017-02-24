@@ -118,6 +118,8 @@ namespace smurf
         Frame *getFrameByName(const std::string &name);
 
         configmaps::ConfigMap getAnnotations(const urdf::JointSharedPtr &joint);
+
+        configmaps::ConfigMap getJointConfigMap(const urdf::JointSharedPtr &joint);
         
         Frame *rootFrame;
         urdf::ModelInterfaceSharedPtr model;

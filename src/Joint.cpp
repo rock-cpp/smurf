@@ -1,10 +1,14 @@
 #include "Joint.hpp"
 
+smurf::Joint::Joint():
+     DynamicTransformation()
+{}
+
 smurf::Joint::Joint(const std::string &name, smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const std::string& provider, 
                     const std::string& port, const std::string& driverName, base::JointLimitRange& limits, 
                     const Eigen::Affine3d& sourceToAxis): 
                     DynamicTransformation(name, sourceFrame, targetFrame, provider, port), limits(limits), 
-                    sourceToAxis(sourceToAxis)
+                    sourceToAxis(sourceToAxis), isDynamic(false)
 {
 
 }
@@ -13,7 +17,7 @@ smurf::Joint::Joint(const std::string &name, smurf::Frame* sourceFrame, smurf::F
                     const std::string& port, const std::string& driverName, base::JointLimitRange& limits, 
                     const Eigen::Affine3d& sourceToAxis, const Eigen::Affine3d& parentToJointOrigin): 
                     DynamicTransformation(name, sourceFrame, targetFrame, provider, port), limits(limits), 
-                    sourceToAxis(sourceToAxis), parentToJointOrigin(parentToJointOrigin)
+                    sourceToAxis(sourceToAxis), parentToJointOrigin(parentToJointOrigin), isDynamic(false)
 {
 
 }
@@ -24,7 +28,7 @@ smurf::Joint::Joint(const std::string &name, smurf::Frame* sourceFrame, smurf::F
                     urdf::JointSharedPtr jointModel):
                     DynamicTransformation(name, sourceFrame, targetFrame, provider, port), limits(limits), 
                     sourceToAxis(sourceToAxis), parentToJointOrigin(parentToJointOrigin),
-                    jointModel(jointModel)
+                    jointModel(jointModel), isDynamic(false)
 {
 
 }
@@ -34,7 +38,7 @@ smurf::Joint::Joint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const 
                     const std::string& port, const std::string& driverName, base::JointLimitRange& limits, 
                     const Eigen::Affine3d& sourceToAxis): 
                     DynamicTransformation(sourceFrame, targetFrame, provider, port), limits(limits), 
-                    sourceToAxis(sourceToAxis)
+                    sourceToAxis(sourceToAxis), isDynamic(false)
 {
 
 }
@@ -43,7 +47,7 @@ smurf::Joint::Joint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const 
                     const std::string& port, const std::string& driverName, base::JointLimitRange& limits, 
                     const Eigen::Affine3d& sourceToAxis, const Eigen::Affine3d& parentToJointOrigin): 
                     DynamicTransformation(sourceFrame, targetFrame, provider, port), limits(limits), 
-                    sourceToAxis(sourceToAxis), parentToJointOrigin(parentToJointOrigin)
+                    sourceToAxis(sourceToAxis), parentToJointOrigin(parentToJointOrigin), isDynamic(false)
 {
 
 }
@@ -54,7 +58,7 @@ smurf::Joint::Joint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const 
                     urdf::JointSharedPtr jointModel):
                     DynamicTransformation(sourceFrame, targetFrame, provider, port), limits(limits), 
                     sourceToAxis(sourceToAxis), parentToJointOrigin(parentToJointOrigin),
-                    jointModel(jointModel)
+                    jointModel(jointModel), isDynamic(false)
 {
 
 }
@@ -86,4 +90,39 @@ std::pair<double, double> smurf::Joint::getEffortLimits() const
 std::pair<double, double> smurf::Joint::getSpeedLimits() const
 {
      return std::pair<double, double>(this->limits.min.speed, this->limits.max.speed);
+}
+
+void smurf::Joint::setParamFromConfigMap(configmaps::ConfigMap configMap)
+{
+     isDynamic = true;
+
+     if (configMap.hasKey("damping_const_constraint_axis1"))
+          springParam.damping_const_constraint_axis1 = static_cast<double>(configMap["damping_const_constraint_axis1"]);
+     else
+          isDynamic = false;
+     
+     if (configMap.hasKey("springDamping"))
+          springParam.springDamping = static_cast<double>(configMap["springDamping"]);
+     else
+          isDynamic = false;
+     
+     if (configMap.hasKey("springStiffness"))
+          springParam.springStiffness = static_cast<double>(configMap["springStiffness"]);
+     else
+          isDynamic = false;
+     
+     if (configMap.hasKey("spring_const_constraint_axis1"))
+          springParam.spring_const_constraint_axis1 = static_cast<double>(configMap["spring_const_constraint_axis1"]);
+     else
+          isDynamic = false;
+}
+
+smurf::SpringParam smurf::Joint::getSpringParam() const
+{
+     return springParam;
+}
+
+bool smurf::Joint::hasSpring() const 
+{
+     return isDynamic;
 }

@@ -7,8 +7,24 @@
 #include <base/JointState.hpp>
 #include <base/JointTransform.hpp>
 
+#include <configmaps/ConfigData.h>
+
 namespace smurf{
     
+    struct SpringParam 
+    {
+        SpringParam()
+            : damping_const_constraint_axis1(0.0),
+              springDamping(0.0),
+              springStiffness(0.0),
+              spring_const_constraint_axis1(0.0)
+        {}
+        
+        double damping_const_constraint_axis1;
+        double springDamping;
+        double springStiffness;
+        double spring_const_constraint_axis1;
+    };
     
     class Joint : public DynamicTransformation
     {
@@ -39,6 +55,12 @@ namespace smurf{
         std::pair<double, double> getEffortLimits() const;
 
         std::pair<double, double> getSpeedLimits() const;
+
+        void setParamFromConfigMap(configmaps::ConfigMap configMap);
+
+        SpringParam getSpringParam() const;
+
+        bool hasSpring() const;
         
     protected:
         
@@ -68,6 +90,11 @@ namespace smurf{
          * 
          */
         urdf::JointSharedPtr jointModel;
+
+        SpringParam springParam;
+
+        bool isDynamic;
+
         
     };
     

@@ -137,6 +137,20 @@ configmaps::ConfigMap smurf::Robot::getAnnotations(const urdf::JointSharedPtr& j
     return annotations;
 }
 
+configmaps::ConfigMap smurf::Robot::getJointConfigMap(const urdf::JointSharedPtr &joint) 
+{
+    configmaps::ConfigMap annotations;
+    for(configmaps::ConfigItem &cv : (*smurfMap)["joint"])
+    {
+        if(static_cast<std::string>((cv)["name"]) == joint->name)
+        {
+            annotations = cv;
+            break;
+        }
+    }    
+    return annotations;    
+}
+
 void smurf::Robot::loadJoints()
 {
     for(std::pair<std::string, urdf::JointSharedPtr > jointIt: model->joints_)
@@ -172,7 +186,12 @@ void smurf::Robot::loadJoints()
                 parentToOriginAff.setIdentity();
                 parentToOriginAff.rotate(rot);
                 parentToOriginAff.translation() = trans;
+                
                 Joint *smurfJoint = new Joint (joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, parentToOriginAff, joint); 
+
+                configmaps::ConfigMap joint_annotations = getJointConfigMap(joint);
+                smurfJoint->setParamFromConfigMap(joint_annotations);
+
                 joints.push_back(smurfJoint);
             }
             break;
@@ -218,6 +237,10 @@ void smurf::Robot::loadJoints()
                     transform = new TranslationalJoint(joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
                 }
                 smurfJoint = (Joint *)transform;
+
+                configmaps::ConfigMap joint_annotations = getJointConfigMap(joint);
+                smurfJoint->setParamFromConfigMap(joint_annotations);
+
                 if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadJoint] Pushing back the dynamic transformation for revolute or continuous joint" << joint->name;}
                 dynamicTransforms.push_back(transform);
                 joints.push_back(smurfJoint);
@@ -227,7 +250,6 @@ void smurf::Robot::loadJoints()
                 throw std::runtime_error("Smurf: Error, got unhandles Joint type");
         }
     }
-
 }
 
 void smurf::Robot::loadMotors()
