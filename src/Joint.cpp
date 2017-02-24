@@ -1,9 +1,5 @@
 #include "Joint.hpp"
 
-smurf::Joint::Joint():
-     DynamicTransformation()
-{}
-
 smurf::Joint::Joint(const std::string &name, smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const std::string& provider, 
                     const std::string& port, const std::string& driverName, base::JointLimitRange& limits, 
                     const Eigen::Affine3d& sourceToAxis): 
