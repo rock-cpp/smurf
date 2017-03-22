@@ -18,7 +18,7 @@ namespace smurf
         std::string getTaskInstanceName();
         Frame * getAttachmentPoint();
         
-        configmaps::ConfigMap getMap(){return this->map;}
+        configmaps::ConfigMap getMap() const {return this->map;}
         
     private:
         std::string name;
