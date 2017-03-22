@@ -21,12 +21,12 @@ smurf::Sensor::Sensor(const std::string &name, const std::string &type, const st
     this->map = sensorMap;
 }
         
-std::string smurf::Sensor::getName()
+std::string smurf::Sensor::getName() const
 {
     return this->name;
 }
 
-std::string smurf::Sensor::getType()
+std::string smurf::Sensor::getType() const
 {
     return this->type;
 }
