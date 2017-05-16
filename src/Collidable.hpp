@@ -31,6 +31,9 @@ namespace smurf{
         {
             return this->contact_params;
         }
+
+        bool operator==(const Collidable& other) const;
+        bool operator!=(const Collidable& other) const;
     private:
         std::string name;
         urdf::Collision collision;
