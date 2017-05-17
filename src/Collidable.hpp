@@ -5,6 +5,9 @@
 #include <urdf_model/model.h>
 #include "ContactParams.hpp"
 
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/export.hpp>
+
 namespace smurf{
     
     class Collidable
@@ -34,6 +37,17 @@ namespace smurf{
 
         bool operator==(const Collidable& other) const;
         bool operator!=(const Collidable& other) const;
+
+        /**Grants access to boost serialization */
+        friend class boost::serialization::access;
+
+        /**Serializes the members of this class*/
+        template <typename Archive>
+        void serialize(Archive &ar, const unsigned int version)
+        {
+            throw std::runtime_error("smurf::Collidable::serialize not implemented");
+        }
+
     private:
         std::string name;
         urdf::Collision collision;
