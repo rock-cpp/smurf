@@ -13,6 +13,7 @@ namespace smurf{
     class Collidable
     {
     public:
+        Collidable(){};
         Collidable(const std::string& name, const ContactParams contact_params, const urdf::Collision& collision);
         std::string getName() const 
         { 
