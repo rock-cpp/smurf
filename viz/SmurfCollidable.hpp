@@ -18,24 +18,19 @@ namespace vizkit3d
                 switch(collision.geometry->type)
                 {
                     case urdf::Geometry::BOX:
-                        std::cout << "BOX"<< std::endl;
                         addBox(collidable);
                         break;
                     case urdf::Geometry::CYLINDER:
-                        std::cout << "CYLINDER"<< std::endl;
-                        //             addCylinder(visual, frameId, uuid);
+                        addCylinder(collidable);
                         break;
                     case urdf::Geometry::MESH:
-                        std::cout << "MESH"<< std::endl;
                         addMesh(collidable);
                         //             addMesh(visual, frameId, uuid);
                         break;
                     case urdf::Geometry::SPHERE:
-                        std::cout << "SPHERE"<< std::endl;
-                        //             addSphere(visual, frameId, uuid);
+                        addSphere(collidable);
                         break;
                     default:
-                        std::cout << "default"<< std::endl;
                         break;
                 }
             }
@@ -61,6 +56,30 @@ namespace vizkit3d
                 //     ShapeDrawable* boxDrawable = new ShapeDrawable(boundingBox);
                 //     Geode* geode = new Geode();
                 //     geode->addDrawable(boxDrawable);
+            }
+            void addCylinder(const std::shared_ptr<smurf::Collidable> collidable)
+            {
+                urdf::Collision collision = collidable->getCollision();
+                boost::shared_ptr<urdf::Cylinder> urdfCylinder = boost::dynamic_pointer_cast<urdf::Cylinder>(collision.geometry);
+                assert(urdfCylinder.get() != nullptr);
+                //x = length, y = radius, z = not used
+                osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0,0,0), urdfCylinder->radius, urdfCylinder->length);
+                osg::ShapeDrawable* cylinderDrawable = new osg::ShapeDrawable(cylinder);
+                osg::Geode* geode = new osg::Geode();
+                geode->addDrawable(cylinderDrawable);
+                addChild(geode);
+            }
+            void addSphere(const std::shared_ptr<smurf::Collidable> collidable)
+            {
+                urdf::Collision collision = collidable->getCollision();
+                boost::shared_ptr<urdf::Sphere> urdfSphere = boost::dynamic_pointer_cast<urdf::Sphere>(collision.geometry);
+                assert(urdfSphere.get() != nullptr);
+                //x = length, y = radius, z = not used
+                osg::Sphere* sphere = new osg::Sphere(osg::Vec3(0,0,0), urdfSphere->radius);
+                osg::ShapeDrawable* sphereDrawable = new osg::ShapeDrawable(sphere);
+                osg::Geode* geode = new osg::Geode();
+                geode->addDrawable(sphereDrawable);
+                addChild(geode);
             }
     };
 }

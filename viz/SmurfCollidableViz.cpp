@@ -30,7 +30,6 @@ osg::ref_ptr<osg::Node> SmurfCollidableViz::createMainNode()
 
 void SmurfCollidableViz::updateMainNode ( osg::Node* node )
 {
-    osg::Geode* geode = static_cast<osg::Geode*>(node);
     if(p->currentCollidable != p->data)
     {
         p->currentCollidable = p->data;
