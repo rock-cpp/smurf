@@ -13,12 +13,12 @@ namespace smurf
         Sensor(const std::string &name, const std::string &type, const std::string &taskInstanceName, Frame *inFrame);
         Sensor(const std::string &name, const std::string &type, const std::string &taskInstanceName, Frame *inFrame, configmaps::ConfigMap sensorMap);
         Sensor();
-        std::string getName();
-        std::string getType();
+        std::string getName() const;
+        std::string getType() const;
         std::string getTaskInstanceName();
         Frame * getAttachmentPoint();
         
-        configmaps::ConfigMap getMap(){return this->map;}
+        configmaps::ConfigMap getMap() const {return this->map;}
         
     private:
         std::string name;
