@@ -37,7 +37,7 @@ namespace vizkit3d
             void addMesh(const std::shared_ptr<smurf::Collidable> collidable)
             {
                 urdf::Collision collision = collidable->getCollision();
-                boost::shared_ptr<urdf::Mesh> mesh = boost::dynamic_pointer_cast<urdf::Mesh>(collision.geometry);
+                urdf::MeshSharedPtr mesh = urdf::dynamic_pointer_cast<urdf::Mesh>(collision.geometry);
                 assert(mesh.get() != nullptr);
                 std::cout << "MESH: " << mesh->filename << std::endl;
                 osg::Node* meshNode = osgDB::readNodeFile(mesh->filename); 
@@ -46,7 +46,7 @@ namespace vizkit3d
             void addBox(const std::shared_ptr<smurf::Collidable> collidable)
             {
                 urdf::Collision collision = collidable->getCollision();
-                boost::shared_ptr<urdf::Box> urdfBox = boost::dynamic_pointer_cast<urdf::Box>(collision.geometry);
+                urdf::BoxSharedPtr urdfBox = urdf::dynamic_pointer_cast<urdf::Box>(collision.geometry);
                 assert(urdfBox.get() != nullptr);
                 osg::Box* box = new osg::Box(osg::Vec3(0,0,0), urdfBox->dim.x, urdfBox->dim.y, urdfBox->dim.z);
                 osg::ShapeDrawable* boxDrawable = new osg::ShapeDrawable(box);
@@ -60,7 +60,7 @@ namespace vizkit3d
             void addCylinder(const std::shared_ptr<smurf::Collidable> collidable)
             {
                 urdf::Collision collision = collidable->getCollision();
-                boost::shared_ptr<urdf::Cylinder> urdfCylinder = boost::dynamic_pointer_cast<urdf::Cylinder>(collision.geometry);
+                urdf::CylinderSharedPtr urdfCylinder = urdf::dynamic_pointer_cast<urdf::Cylinder>(collision.geometry);
                 assert(urdfCylinder.get() != nullptr);
                 //x = length, y = radius, z = not used
                 osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0,0,0), urdfCylinder->radius, urdfCylinder->length);
@@ -72,7 +72,7 @@ namespace vizkit3d
             void addSphere(const std::shared_ptr<smurf::Collidable> collidable)
             {
                 urdf::Collision collision = collidable->getCollision();
-                boost::shared_ptr<urdf::Sphere> urdfSphere = boost::dynamic_pointer_cast<urdf::Sphere>(collision.geometry);
+                urdf::SphereSharedPtr urdfSphere = urdf::dynamic_pointer_cast<urdf::Sphere>(collision.geometry);
                 assert(urdfSphere.get() != nullptr);
                 //x = length, y = radius, z = not used
                 osg::Sphere* sphere = new osg::Sphere(osg::Vec3(0,0,0), urdfSphere->radius);
