@@ -13,6 +13,7 @@ rock_library(smurf
             Transformation.cpp
             TranslationalJoint.cpp
             Motor.cpp
+            Visual.cpp
     HEADERS Robot.hpp
             Collidable.hpp
             ContactParams.hpp
@@ -27,6 +28,7 @@ rock_library(smurf
             TranslationalJoint.hpp
             Smurf.hpp
             Motor.hpp
+            Visual.hpp
     DEPS_PKGCONFIG
         base-types
         configmaps
