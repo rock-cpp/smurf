@@ -7,6 +7,7 @@
 #include "Sensor.hpp"
 #include "Motor.hpp"
 #include "ContactParams.hpp"
+#include "Visual.hpp"
 #include <configmaps/ConfigData.h>
 #include <urdf_world/types.h>
 
