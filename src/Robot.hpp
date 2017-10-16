@@ -112,7 +112,7 @@ namespace smurf
          * - Loads the collidables
          * - Loads the inertials
          */
-        void loadFromSmurf(const std::string &path);
+        void loadFromSmurf(const std::string &path, std::string prefix = "");
         
     protected:
         
@@ -134,6 +134,8 @@ namespace smurf
         std::vector<smurf::Motor *> motors;
         
         const bool debug = false;
+
+        std::string prefix;
     };
 };
 #endif // SMURF_H

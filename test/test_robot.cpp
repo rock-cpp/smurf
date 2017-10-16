@@ -146,3 +146,83 @@ BOOST_AUTO_TEST_CASE(test_get_limits)
     BOOST_CHECK(speed_limit.first == 0);
     BOOST_CHECK(speed_limit.second == 6.28);        
 }
+
+BOOST_AUTO_TEST_CASE(test_load_smurf_without_prefix)
+{
+    const string path="./test/sample_smurfs/two_boxes_joined/smurf/two_boxes_with_motor.smurf";
+    smurf::Robot robot;
+
+    robot.loadFromSmurf(path);
+
+    std::cout << "---------------------------- JOINT" << std::endl;
+    std::vector<smurf::Joint *> joints = robot.getJoints();
+    for(smurf::Joint* joint : joints)
+    {
+        std::cout << "--- " << joint->getName() << std::endl;
+        std::cout << "source: " << joint->getSourceFrame().getName() << std::endl;
+        std::cout << "target: " << joint->getTargetFrame().getName() << std::endl;
+
+    }    
+
+    std::cout << "---------------------------- DYNAMIC TRANSFORMATION" << std::endl;
+    std::vector<smurf::DynamicTransformation *> dynamicTransforms = robot.getDynamicTransforms();    
+    for(smurf::DynamicTransformation* dynamicTransform : dynamicTransforms)
+    {
+        std::cout << "--- " << dynamicTransform->getName() << std::endl;
+        std::cout << "source: " << dynamicTransform->getSourceFrame().getName() << std::endl;
+        std::cout << "target: " << dynamicTransform->getTargetFrame().getName() << std::endl;
+
+    }        
+
+    std::cout << "---------------------------- STATIC TRANSFORMATION" << std::endl;
+    std::vector<smurf::StaticTransformation *> staticTransforms = robot.getStaticTransforms();    
+    for(smurf::StaticTransformation* staticTransform : staticTransforms)
+    {
+        std::cout << "--- " << staticTransform->getName() << std::endl;
+        std::cout << "source: " << staticTransform->getSourceFrame().getName() << std::endl;
+        std::cout << "target: " << staticTransform->getTargetFrame().getName() << std::endl;
+
+    }            
+
+}
+
+BOOST_AUTO_TEST_CASE(test_load_smurf_with_prefix)
+{
+    const string path="./test/sample_smurfs/two_boxes_joined/smurf/two_boxes_with_motor.smurf";
+    smurf::Robot robot;
+
+    std::string prefix = "path_sim_";
+
+    robot.loadFromSmurf(path, prefix);
+
+    std::cout << "---------------------------- JOINT" << std::endl;
+    std::vector<smurf::Joint *> joints = robot.getJoints();
+    for(smurf::Joint* joint : joints)
+    {
+        std::cout << "--- " << joint->getName() << std::endl;
+        std::cout << "source: " << joint->getSourceFrame().getName() << std::endl;
+        std::cout << "target: " << joint->getTargetFrame().getName() << std::endl;
+
+    }    
+
+    std::cout << "---------------------------- DYNAMIC TRANSFORMATION" << std::endl;
+    std::vector<smurf::DynamicTransformation *> dynamicTransforms = robot.getDynamicTransforms();    
+    for(smurf::DynamicTransformation* dynamicTransform : dynamicTransforms)
+    {
+        std::cout << "--- " << dynamicTransform->getName() << std::endl;
+        std::cout << "source: " << dynamicTransform->getSourceFrame().getName() << std::endl;
+        std::cout << "target: " << dynamicTransform->getTargetFrame().getName() << std::endl;
+
+    }        
+
+    std::cout << "---------------------------- STATIC TRANSFORMATION" << std::endl;
+    std::vector<smurf::StaticTransformation *> staticTransforms = robot.getStaticTransforms();    
+    for(smurf::StaticTransformation* staticTransform : staticTransforms)
+    {
+        std::cout << "--- " << staticTransform->getName() << std::endl;
+        std::cout << "source: " << staticTransform->getSourceFrame().getName() << std::endl;
+        std::cout << "target: " << staticTransform->getTargetFrame().getName() << std::endl;
+
+    }            
+
+}

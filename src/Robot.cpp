@@ -9,6 +9,7 @@
 #include "TranslationalJoint.hpp"
 
 smurf::Robot::Robot()
+    : prefix()
 {
     smurfMap = new configmaps::ConfigMap();
 }
@@ -39,7 +40,7 @@ smurf::Frame* smurf::Robot::getFrameByName(const std::string& name)
             return fr;
     }
     
-    throw std::runtime_error("smurf::Robot::getFrameByName : Error , frame " + name + " is not known" );
+    throw std::runtime_error("smurf::Robot::getFrameByName : Error , frame " + name + " is unknown" );
 }
 
 const smurf::ContactParams smurf::Robot::getContactParams(const std::string& collisionName, const std::string& linkName)
@@ -80,7 +81,7 @@ void smurf::Robot::loadCollidables()
     if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadCollidables] Loading collidables just started ";}
     for(std::pair<std::string, urdf::LinkSharedPtr> link: model->links_)
     {
-        smurf::Frame* frame = getFrameByName(link.first);
+        smurf::Frame* frame = getFrameByName(prefix + link.first);
         for(urdf::CollisionSharedPtr collision : link.second->collision_array)
         {
             // Find the correspondent collidable data if exists and create the collidable object
@@ -94,7 +95,7 @@ void smurf::Robot::loadCollisions()
 {
     for(std::pair<std::string, urdf::LinkSharedPtr> link: model->links_)
     {
-        smurf::Frame* frame = getFrameByName(link.first);
+        smurf::Frame* frame = getFrameByName(prefix + link.first);
         for(urdf::CollisionSharedPtr collision : link.second->collision_array)
         {
             frame->addCollision(*collision);
@@ -106,7 +107,7 @@ void smurf::Robot::loadInertials()
 {
     for(std::pair<std::string, urdf::LinkSharedPtr> link: model->links_)
     {
-        smurf::Frame* frame = getFrameByName(link.first);
+        smurf::Frame* frame = getFrameByName(prefix + link.first);
         if (debug) { LOG_DEBUG_S << " [smurf::Robot::loadInertials] Checking for inertials in link with name " << link.first;}
         if (link.second->inertial != NULL)
         {
@@ -156,14 +157,14 @@ void smurf::Robot::loadJoints()
     for(std::pair<std::string, urdf::JointSharedPtr > jointIt: model->joints_)
     {
         urdf::JointSharedPtr joint = jointIt.second;
-        Frame *source = getFrameByName(joint->parent_link_name);
-        Frame *target = getFrameByName(joint->child_link_name);
+        Frame *source = getFrameByName(prefix + joint->parent_link_name);
+        Frame *target = getFrameByName(prefix + joint->child_link_name);
         switch(joint->type)
         {
           case urdf::Joint::FIXED:
             {
                 const urdf::Pose &tr(joint->parent_to_joint_origin_transform);     
-                StaticTransformation *transform = new StaticTransformation(joint->name, source, target,
+                StaticTransformation *transform = new StaticTransformation(prefix + joint->name, source, target,
                                                                            Eigen::Quaterniond(tr.rotation.w, tr.rotation.x, tr.rotation.y, tr.rotation.z),
                                                                            Eigen::Vector3d(tr.position.x, tr.position.y, tr.position.z));              
                 if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadJoint] Pushing back the statict transformation for the fixed joint" << joint->name;}
@@ -173,7 +174,7 @@ void smurf::Robot::loadJoints()
             case urdf::Joint::FLOATING:
             {
                 configmaps::ConfigMap annotations = getAnnotations(joint);
-                DynamicTransformation *transform = new DynamicTransformation(joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"));
+                DynamicTransformation *transform = new DynamicTransformation(prefix + joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"));
                 dynamicTransforms.push_back(transform);
                 Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
                 Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
@@ -187,7 +188,7 @@ void smurf::Robot::loadJoints()
                 parentToOriginAff.rotate(rot);
                 parentToOriginAff.translation() = trans;
                 
-                Joint *smurfJoint = new Joint (joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, parentToOriginAff, joint); 
+                Joint *smurfJoint = new Joint (prefix + joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, parentToOriginAff, joint); 
 
                 configmaps::ConfigMap joint_annotations = getJointConfigMap(joint);
                 smurfJoint->setParamFromConfigMap(joint_annotations);
@@ -230,11 +231,11 @@ void smurf::Robot::loadJoints()
                 parentToOriginAff.translation() = trans;
                 if(joint->type == urdf::Joint::REVOLUTE || joint->type == urdf::Joint::CONTINUOUS)
                 {
-                    transform = new RotationalJoint(joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
+                    transform = new RotationalJoint(prefix + joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
                 }
                 else
                 {
-                    transform = new TranslationalJoint(joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
+                    transform = new TranslationalJoint(prefix + joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
                 }
                 smurfJoint = (Joint *)transform;
 
@@ -269,7 +270,7 @@ void smurf::Robot::loadSensors()
     for (configmaps::ConfigVector::iterator it = (*smurfMap)["sensors"].begin(); it != (*smurfMap)["sensors"].end(); ++it) 
     {
         configmaps::ConfigMap sensorMap = *it;
-        smurf::Sensor *sensor = new Sensor(sensorMap["name"], sensorMap["type"], sensorMap["taskInstanceName"], getFrameByName(sensorMap["link"]), sensorMap);
+        smurf::Sensor *sensor = new Sensor(sensorMap["name"], sensorMap["type"], sensorMap["taskInstanceName"], getFrameByName(prefix + std::string(sensorMap["link"])), sensorMap);
         sensors.push_back(sensor);
     }
     
@@ -278,14 +279,14 @@ void smurf::Robot::loadSensors()
 void smurf::Robot::loadFrames(urdf::ModelInterfaceSharedPtr model)
 {
     urdf::LinkConstSharedPtr root = model->getRoot();
-    const std::string rootName = root->name;
+    const std::string rootName = prefix + root->name;
     for(std::pair<std::string, urdf::LinkSharedPtr> link: model->links_)
     {
-        Frame *frame = new Frame(link.first);
+        Frame *frame = new Frame(prefix + link.first);
         availableFrames.push_back(frame);
         if (frame->getName() == rootName)
         {
-            if (debug){LOG_DEBUG_S << "[smurf::Robot::LoadFrames] Found the root frame: " << root->name;}
+            if (debug){LOG_DEBUG_S << "[smurf::Robot::LoadFrames] Found the root frame: " << prefix + root->name;}
             rootFrame = frame;
         }
     }
@@ -295,7 +296,7 @@ void smurf::Robot::loadVisuals()
 {
     for(std::pair<std::string, urdf::LinkSharedPtr> link: model->links_)
     {
-        Frame *frame = getFrameByName(link.second->name);
+        Frame *frame = getFrameByName(prefix + link.second->name);
         for(urdf::VisualSharedPtr visual : link.second->visual_array)
         {
             frame->addVisual(*visual);
@@ -303,8 +304,9 @@ void smurf::Robot::loadVisuals()
     }
 }
 
-void smurf::Robot::loadFromSmurf(const std::string& path)
+void smurf::Robot::loadFromSmurf(const std::string& path, std::string prefix)
 {    
+    this->prefix = prefix;
     // Load model from file
     boost::filesystem::path filepath(path);
     model = smurf_parser::parseFile(smurfMap, filepath.parent_path().generic_string(), filepath.filename().generic_string(), true);
