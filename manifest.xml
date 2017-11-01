@@ -9,5 +9,5 @@
   <depend package="base/cmake" />
   <depend package="base/types" />
   <depend package="simulation/smurf_parser" />
-  <depend package="gui/osgviz/osgviz" />
+  <depend package="gui/osgviz/osgviz" optional="1" />
 </package>
