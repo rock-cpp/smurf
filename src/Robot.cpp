@@ -271,6 +271,7 @@ void smurf::Robot::loadSensors()
     {
         configmaps::ConfigMap sensorMap = *it;
         smurf::Sensor *sensor = new Sensor(sensorMap["name"], sensorMap["type"], sensorMap["taskInstanceName"], getFrameByName(prefix + std::string(sensorMap["link"])), sensorMap);
+        sensor->setJointName(model->getLink(sensorMap["link"])->parent_joint->name);
         sensors.push_back(sensor);
     }
     

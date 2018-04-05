@@ -17,8 +17,11 @@ namespace smurf
         std::string getType() const;
         std::string getTaskInstanceName();
         Frame * getAttachmentPoint();
+        std::string getJointName() const;
         
         configmaps::ConfigMap getMap() const {return this->map;}
+
+        void setJointName(std::string jointName);
         
     private:
         std::string name;
@@ -29,6 +32,8 @@ namespace smurf
         Frame *attachmentPoint;
         
         configmaps::ConfigMap map;
+
+        std::string jointName;
     };
     
 };

@@ -40,3 +40,13 @@ std::string smurf::Sensor::getTaskInstanceName()
 {
     return this->taskInstanceName;
 }
+
+void smurf::Sensor::setJointName(std::string jointName) 
+{
+    this->jointName = jointName;
+}
+
+std::string smurf::Sensor::getJointName() const
+{
+    return this->jointName;
+}
