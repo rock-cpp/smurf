@@ -31,12 +31,12 @@ smurf::Visual::Visual()
 
 smurf::Visual::Visual(const urdf::Visual& urdfVisual)
 {
-    geometry = urdfVisual.geometry;
-    material = urdfVisual.material;
-    material_name = urdfVisual.material_name;
     name = urdfVisual.name;
-    origin = urdfVisual.origin;
+    geometry = urdfVisual.geometry;
 
+    material = Material(urdfVisual.material);
+
+    origin = urdfVisual.origin;
 }
 
 // FIX. the comparison operator
@@ -45,13 +45,20 @@ bool  smurf::Visual::operator==(const smurf::Visual& other) const
 {
     return other.geometry == geometry &&
            other.material == material &&
-           other.material_name == material_name &&
            other.name == name;
 }
 
 bool smurf::Visual::operator!=(const smurf::Visual& other) const
 {
     return !operator==(other);
+}
+
+void smurf::Visual::setMaterial(smurf::Material material) {
+    this->material = material;
+}
+
+smurf::Material smurf::Visual::getMaterial() const {
+    return this->material;
 }
 
 

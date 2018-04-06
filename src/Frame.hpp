@@ -4,6 +4,7 @@
 #include <urdf_model/model.h>
 #include "Collidable.hpp"
 #include "Inertial.hpp"
+#include "Visual.hpp"
 
 namespace smurf
 {
@@ -12,7 +13,7 @@ namespace smurf
     {
         
     public:
-        Frame(const std::string &name, const std::vector<urdf::Visual>& visuals);
+        Frame(const std::string &name, const std::vector<smurf::Visual>& visuals);
         Frame(const std::string &name);
         Frame();
         
@@ -21,10 +22,10 @@ namespace smurf
             return name;
         };
         
-        void addVisual(const urdf::Visual& visual);
-        void setVisuals(const std::vector<urdf::Visual>& visuals);
-        void getVisuals(std::vector<urdf::Visual>& Visuals) const;
-        std::vector<urdf::Visual>& getVisuals();
+        void addVisual(const smurf::Visual& visual);
+        void setVisuals(const std::vector<smurf::Visual>& visuals);
+        void getVisuals(std::vector<smurf::Visual>& Visuals) const;
+        std::vector<smurf::Visual>& getVisuals();
         /**
          * Collisions are the objects defined for collision detection in the URDF model.
          */
@@ -78,7 +79,7 @@ namespace smurf
         std::vector<urdf::Collision> collisions;
         
         ///Visuals that can be displayed inside the frame
-        std::vector<urdf::Visual> visuals;
+        std::vector<smurf::Visual> visuals;
         
         bool hasInertial;
         

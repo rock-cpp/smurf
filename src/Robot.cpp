@@ -298,9 +298,45 @@ void smurf::Robot::loadVisuals()
     for(std::pair<std::string, urdf::LinkSharedPtr> link: model->links_)
     {
         Frame *frame = getFrameByName(prefix + link.second->name);
-        for(urdf::VisualSharedPtr visual : link.second->visual_array)
+        for(urdf::VisualSharedPtr visual_urdf : link.second->visual_array)
         {
-            frame->addVisual(*visual);
+            // set the additional color information from smurf
+            smurf::Visual visual_smurf(*visual_urdf);
+            for (configmaps::ConfigVector::iterator it = (*smurfMap)["materials"].begin(); it != (*smurfMap)["materials"].end(); ++it) 
+            {
+                
+                configmaps::ConfigMap materialMap = *it;
+                
+                if(materialMap["name"] == visual_smurf.getMaterial().getName())
+                {
+                    // diffuse color is set over urdf::Visual taken from urdf file
+                    // but for some reason there is one more diffuce color in smurf materials file
+                    // but both diffuse colors (from urdf and smurf) seems to have equal color values
+                    // TODO: add some check if diffuse color from smurf is the same as from urdf file
+
+                    // we get material, since there are some value that was set over smurf::Visaul constructor
+                    smurf::Material material = visual_smurf.getMaterial();
+
+                    urdf::Color ambient_color;
+                    ambient_color.r = (double)materialMap["ambientColor"][0]["r"];
+                    ambient_color.g = (double)materialMap["ambientColor"][0]["g"];
+                    ambient_color.b = (double)materialMap["ambientColor"][0]["b"];
+                    ambient_color.a = 0.0; // for some reason there is no alpha channel in smurf colors
+                    material.setAmbientColor(ambient_color);
+
+                    urdf::Color specular_color;
+                    specular_color.r = (double)materialMap["specularColor"][0]["r"];
+                    specular_color.g = (double)materialMap["specularColor"][0]["g"];
+                    specular_color.b = (double)materialMap["specularColor"][0]["b"];
+                    specular_color.a = 0.0; // for some reason there is no alpha channel in smurf colors
+                    material.setSpecularColor(specular_color);
+
+                    material.setShininess((double)materialMap["shininess"]);
+
+                    visual_smurf.setMaterial(material);
+                }
+            }
+            frame->addVisual(visual_smurf);
         }
     }
 }

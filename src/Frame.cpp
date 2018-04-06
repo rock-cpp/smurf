@@ -1,6 +1,6 @@
 #include "Frame.hpp"
 
-smurf::Frame::Frame(const std::string &name, const std::vector<urdf::Visual>& visuals) :
+smurf::Frame::Frame(const std::string &name, const std::vector<smurf::Visual>& visuals) :
     name(name), visuals(visuals), hasInertial(false)
 {
 }
@@ -13,22 +13,22 @@ smurf::Frame::Frame(): hasInertial(false)
 {
 }
 
-void smurf::Frame::addVisual(const urdf::Visual& visual)
+void smurf::Frame::addVisual(const smurf::Visual& visual)
 {
     visuals.push_back(visual);
 }
 
-void smurf::Frame::setVisuals(const std::vector<urdf::Visual>& visuals)
+void smurf::Frame::setVisuals(const std::vector<smurf::Visual>& visuals)
 {
     this->visuals = visuals;
 }
 
-void smurf::Frame::getVisuals(std::vector<urdf::Visual> & Visuals) const
+void smurf::Frame::getVisuals(std::vector<smurf::Visual> & Visuals) const
 {
      Visuals=this->visuals;
 }
 
-std::vector<urdf::Visual> &smurf::Frame::getVisuals()
+std::vector<smurf::Visual> &smurf::Frame::getVisuals()
 {
     return this->visuals;
 }
