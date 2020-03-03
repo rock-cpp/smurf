@@ -3,7 +3,7 @@
 int main(int argc, char** argv)
 {
     smurf::Robot robot;
-    robot.loadFromSmurf("../spaceclimber/SpaceClimber.smurf");
-    
+    robot.loadFromSmurf(argv[1]);
+
 	return 0;
 }
