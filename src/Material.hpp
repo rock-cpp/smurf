@@ -24,58 +24,65 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef VISUAL_H
-#define VISUAL_H
+#ifndef MATERIAL_H
+#define MATERIAL_H
 #include <urdf_model/types.h>
 #include <urdf_model/link.h>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 
-#include "Material.hpp"
 namespace smurf
 {
 
-    /**A replacement for urdf::Visual that hides the visual offset, because
-     * in envire the offset is encoded by the structure of the
-     * EnvireGraph*/
-    struct Visual
+    /**Extended verson of material.
+     * The urdf::Material contains only name of material, texture_filename and diffuse color.
+     * Therefore, smurf::Material extends the urdf::Material by ambientColor, specularColor and shininess
+    */
+    struct Material
     {
-        Visual();
-        Visual(const urdf::Visual& urdfVisual);
+        Material();
+        Material(urdf::MaterialSharedPtr material);
 
-        std::string name;
-        urdf::GeometrySharedPtr geometry;
-        
+        bool operator==(const Material& other) const;
+        bool operator!=(const Material& other) const;
 
-        int groupId;
+        void setName(std::string name);
+        std::string getName() const;
 
-        urdf::Pose origin;
+        void setTextureFilename(std::string texture_filename);
+        std::string getTextureFilename() const;          
 
-        bool operator==(const Visual& other) const;
-        bool operator!=(const Visual& other) const;
+        void setAmbientColor(urdf::Color color);
+        urdf::Color getAmbientColor() const;        
 
-        std::string getName() const 
-        {
-            return name;
-        }
+        void setDiffuseColor(urdf::Color color);
+        urdf::Color getDiffuseColor() const;     
 
-        void setMaterial(smurf::Material material);
-        smurf::Material getMaterial() const;
+        void setSpecularColor(urdf::Color color);
+        urdf::Color getSpecularColor() const; 
+
+        void setShininess(float shininess);
+        float getShininess() const;
 
         /**Grants access to boost serialization */
         friend class boost::serialization::access;
 
         /**Serializes the members of this class*/
         template <typename Archive>
-            void serialize(Archive &ar, const unsigned int version)
-            {
-                throw std::runtime_error("Smurf::Visual::serialize not implemented");
-            }
+        void serialize(Archive &ar, const unsigned int version)
+        {
+            throw std::runtime_error("Smurf::Visual::serialize not implemented");
+        }
 
         private:
-            smurf::Material material;
-
+            std::string name;
+            std::string texture_filename;
+            
+            urdf::Color ambientColor;
+            urdf::Color diffuseColor;
+            urdf::Color specularColor;
+            float shininess;            
     };
 }
 
-#endif // VISUAL_H
+#endif // MATERIAL_H

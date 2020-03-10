@@ -36,9 +36,9 @@ BOOST_AUTO_TEST_CASE(test_get_visuals)
     
     for(const smurf::Frame* pFrame : robot.getFrames())
     {
-        vector<urdf::Visual> visuals;
+        vector<smurf::Visual> visuals;
         pFrame->getVisuals(visuals);
-        for(const urdf::Visual& v : visuals)
+        for(const smurf::Visual& v : visuals)
         {
             switch(v.geometry->type)
             {
