@@ -34,7 +34,9 @@ smurf::Visual::Visual(const urdf::Visual& urdfVisual)
     name = urdfVisual.name;
     geometry = urdfVisual.geometry;
 
-    material = Material(urdfVisual.material);
+    // if visual has material
+    if (urdfVisual.material)
+        material = Material(urdfVisual.material);
 
     origin = urdfVisual.origin;
 }
