@@ -61,6 +61,8 @@ namespace smurf{
         SpringParam getSpringParam() const;
 
         bool hasSpring() const;
+
+        std::string getURDFName() const;
         
     protected:
         

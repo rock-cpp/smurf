@@ -122,3 +122,7 @@ bool smurf::Joint::hasSpring() const
 {
      return isDynamic;
 }
+
+std::string smurf::Joint::getURDFName() const {
+     return jointModel->name;
+}
