@@ -43,7 +43,6 @@ smurf::Joint::Joint(const std::string &name, Frame* sourceFrame, Frame* targetFr
 
 }
 
-
 smurf::Joint::Joint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const std::string& provider,
                     const std::string& port, const std::string& driverName, base::JointLimitRange& limits,
                     const Eigen::Affine3d& sourceToAxis):
