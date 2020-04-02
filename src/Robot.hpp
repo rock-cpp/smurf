@@ -120,6 +120,8 @@ namespace smurf
 
         configmaps::ConfigMap getAnnotations(const urdf::JointSharedPtr &joint);
 
+        bool hasAnnotations();
+
         configmaps::ConfigMap getJointConfigMap(const urdf::JointSharedPtr &joint);
         
         Frame *rootFrame;

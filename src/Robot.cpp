@@ -138,6 +138,11 @@ configmaps::ConfigMap smurf::Robot::getAnnotations(const urdf::JointSharedPtr& j
     return annotations;
 }
 
+bool smurf::Robot::hasAnnotations()
+{
+    return (*smurfMap).hasKey("joint_tasks");
+}
+
 configmaps::ConfigMap smurf::Robot::getJointConfigMap(const urdf::JointSharedPtr &joint) 
 {
     configmaps::ConfigMap annotations;
@@ -154,6 +159,10 @@ configmaps::ConfigMap smurf::Robot::getJointConfigMap(const urdf::JointSharedPtr
 
 void smurf::Robot::loadJoints()
 {
+    // fix: look if the annotation with the task & transformation exists for the robot
+    // if there is annotation file, that set provider task and port into transformation
+    bool useAnnotation = hasAnnotations();
+
     for(std::pair<std::string, urdf::JointSharedPtr > jointIt: model->joints_)
     {
         urdf::JointSharedPtr joint = jointIt.second;
@@ -173,8 +182,14 @@ void smurf::Robot::loadJoints()
             break;
             case urdf::Joint::FLOATING:
             {
-                configmaps::ConfigMap annotations = getAnnotations(joint);
-                DynamicTransformation *transform = new DynamicTransformation(prefix + joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"));
+                DynamicTransformation *transform = NULL;
+                if(useAnnotation)
+                {
+                    configmaps::ConfigMap annotations = getAnnotations(joint);
+                    transform = new DynamicTransformation(prefix + joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"));
+                } else
+                    transform = new DynamicTransformation(prefix + joint->name, source, target);
+
                 dynamicTransforms.push_back(transform);
                 Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
                 Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
@@ -188,7 +203,13 @@ void smurf::Robot::loadJoints()
                 parentToOriginAff.rotate(rot);
                 parentToOriginAff.translation() = trans;
                 
-                Joint *smurfJoint = new Joint (prefix + joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, parentToOriginAff, joint); 
+                Joint *smurfJoint = NULL;
+                if (useAnnotation) {
+                    configmaps::ConfigMap annotations = getAnnotations(joint);
+                    smurfJoint = new Joint (prefix + joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, parentToOriginAff, joint);
+                }
+                else
+                    smurfJoint = new Joint(prefix + joint->name, source, target, limits, sourceToAxis, parentToOriginAff, joint);
 
                 configmaps::ConfigMap joint_annotations = getJointConfigMap(joint);
                 smurfJoint->setParamFromConfigMap(joint_annotations);
@@ -200,7 +221,7 @@ void smurf::Robot::loadJoints()
             case urdf::Joint::CONTINUOUS:
             case urdf::Joint::PRISMATIC:
             {
-                configmaps::ConfigMap annotations = getAnnotations(joint);
+
                 base::JointState minState;
                 minState.position = joint->limits->lower;
                 minState.effort = 0;
@@ -218,8 +239,7 @@ void smurf::Robot::loadJoints()
                 Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
                 Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
                 sourceToAxis.translation() = axis;
-                
-                DynamicTransformation *transform = NULL;
+
                 Joint *smurfJoint;
                 // push the correspondent smurf::joint 
                 const urdf::Pose parentToOrigin(joint->parent_to_joint_origin_transform);
@@ -229,14 +249,24 @@ void smurf::Robot::loadJoints()
                 parentToOriginAff.setIdentity();
                 parentToOriginAff.rotate(rot);
                 parentToOriginAff.translation() = trans;
-                if(joint->type == urdf::Joint::REVOLUTE || joint->type == urdf::Joint::CONTINUOUS)
+
+                DynamicTransformation *transform = NULL;
+
+                if(useAnnotation)
                 {
-                    transform = new RotationalJoint(prefix + joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
-                }
-                else
+                    configmaps::ConfigMap annotations = getAnnotations(joint);
+                    if(joint->type == urdf::Joint::REVOLUTE || joint->type == urdf::Joint::CONTINUOUS)
+                        transform = new RotationalJoint(prefix + joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
+                    else
+                        transform = new TranslationalJoint(prefix + joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
+                } else
                 {
-                    transform = new TranslationalJoint(prefix + joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
+                    if(joint->type == urdf::Joint::REVOLUTE || joint->type == urdf::Joint::CONTINUOUS)
+                        transform = new RotationalJoint(prefix + joint->name, source, target, limits, sourceToAxis, axis, parentToOriginAff, joint);
+                    else
+                        transform = new TranslationalJoint(prefix + joint->name, source, target, limits, sourceToAxis, axis, parentToOriginAff, joint);
                 }
+
                 smurfJoint = (Joint *)transform;
 
                 configmaps::ConfigMap joint_annotations = getJointConfigMap(joint);
