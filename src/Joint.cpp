@@ -29,6 +29,16 @@ smurf::Joint::Joint(const std::string &name, smurf::Frame* sourceFrame, smurf::F
 
 }
 
+smurf::Joint::Joint(const std::string &name, Frame* sourceFrame, Frame* targetFrame,
+                    base::JointLimitRange& limits,
+                    const Eigen::Affine3d& sourceToAxis, const Eigen::Affine3d& parentToJointOrigin,
+                    urdf::JointSharedPtr jointModel):
+                    DynamicTransformation(name, sourceFrame, targetFrame), limits(limits),
+                    sourceToAxis(sourceToAxis), parentToJointOrigin(parentToJointOrigin),
+                    jointModel(jointModel), isDynamic(false)
+{
+
+}
 
 smurf::Joint::Joint(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const std::string& provider, 
                     const std::string& port, const std::string& driverName, base::JointLimitRange& limits, 

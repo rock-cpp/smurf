@@ -13,6 +13,8 @@ namespace smurf
         
         DynamicTransformation(Frame *sourceFrame, Frame *targetFrame, const std::string &provider, const std::string &port);
 
+        DynamicTransformation(const std::string &name, Frame *sourceFrame, Frame *targetFrame);
+
         const std::string &getProviderName() const
         {
             return providerName;
