@@ -60,6 +60,15 @@ int main(int argc, char** argv)
     configmaps::ConfigMap mmap;
     configmaps::ConfigVector vect;
 
+    if(what == ""){
+        std::string fp = robot.getURDFFilePath();
+        mmap["urdf"] = fp;
+    }
+    else if(what == "urdf"){
+        std::cout << robot.getURDFFilePath();
+        return 0;
+    }
+
     if(what == "" || what == "sensors"){
         std::vector<smurf::Sensor *> sensors = robot.getSensors();
         for(smurf::Sensor* item : sensors)

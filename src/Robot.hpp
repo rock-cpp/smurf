@@ -62,6 +62,11 @@ namespace smurf
             return rootFrame;
         };
 
+        std::string getURDFFilePath() const
+        {
+            return urdf_file_path;
+        };
+
         const ContactParams getContactParams(const std::string& collisionName, const std::string& linkName);
 
         /**
@@ -135,6 +140,7 @@ namespace smurf
         std::vector<smurf::Joint *> joints;
         std::vector<smurf::Sensor *> sensors;
         std::vector<smurf::Motor *> motors;
+        std::string urdf_file_path="";
         
         const bool debug = false;
 

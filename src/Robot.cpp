@@ -375,8 +375,18 @@ void smurf::Robot::loadFromSmurf(const std::string& path, std::string prefix)
 {    
     this->prefix = prefix;
     // Load model from file
-    boost::filesystem::path filepath(path);
-    model = smurf_parser::parseFile(smurfMap, filepath.parent_path().generic_string(), filepath.filename().generic_string(), true);
+    boost::filesystem::path filepath(boost::filesystem::absolute(path));
+    boost::filesystem::path root_folder = filepath.parent_path();
+    model = smurf_parser::parseFile(smurfMap, root_folder.generic_string(), filepath.filename().generic_string(), true);
+
+    // Get URDF file path
+    configmaps::ConfigVector::iterator it;
+    for(it = (*smurfMap)["files"].begin(); it!=(*smurfMap)["files"].end(); ++it) {
+        boost::filesystem::path filepath((std::string)(*it));
+        if(filepath.extension().generic_string() == ".urdf") {
+            urdf_file_path = boost::filesystem::canonical(root_folder / filepath).generic_string();
+        }
+    }
     loadFrames(model); //NOTE Sets also the root frame
     loadVisuals();
     loadJoints(); 
