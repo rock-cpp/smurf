@@ -40,6 +40,10 @@ rock_library(smurf
         Boost_FILESYSTEM 
 )
 
-rock_executable(smurf_bin Main.cpp
+FIND_PACKAGE( Boost COMPONENTS program_options filesystem REQUIRED )
+INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
+
+rock_executable(smurf_dump Main.cpp
     DEPS smurf)
+TARGET_LINK_LIBRARIES(smurf_dump ${Boost_LIBRARIES})
 

@@ -113,6 +113,7 @@ namespace smurf
          * - Loads the inertials
          */
         void loadFromSmurf(const std::string &path, std::string prefix = "");
+        configmaps::ConfigMap *smurfMap;
         
     protected:
         
@@ -126,7 +127,7 @@ namespace smurf
         
         Frame *rootFrame;
         urdf::ModelInterfaceSharedPtr model;
-        configmaps::ConfigMap *smurfMap;
+
         
         std::vector<smurf::Frame *> availableFrames;
         std::vector<smurf::StaticTransformation *> staticTransforms;

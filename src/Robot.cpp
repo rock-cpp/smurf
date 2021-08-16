@@ -373,8 +373,6 @@ void smurf::Robot::loadVisuals()
 
 void smurf::Robot::loadFromSmurf(const std::string& path, std::string prefix)
 {    
-    LOG_DEBUG_S << "[smurf::Robot::LoadFrames] load robot from " << path << " with prefix: " << prefix << std::endl;
-
     this->prefix = prefix;
     // Load model from file
     boost::filesystem::path filepath(path);

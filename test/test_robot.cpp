@@ -90,7 +90,6 @@ BOOST_AUTO_TEST_CASE(test_load_motors)
         configmaps::ConfigMap map = motor -> getMotorMap();
         std::string mapString = map.toYamlString();
         std::cout << "String from map: " << mapString << std::endl;
-
     }
 }
 
