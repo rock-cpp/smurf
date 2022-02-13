@@ -1,5 +1,4 @@
-#ifndef TRANSFORMATION_H
-#define TRANSFORMATION_H
+#pragma once
 
 #include "Frame.hpp"
 #include <base/Eigen.hpp>
@@ -43,5 +42,3 @@ namespace smurf
     };
     
 };
-
-#endif // TRANSFORMATION_H
