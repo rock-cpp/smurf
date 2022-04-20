@@ -12,6 +12,6 @@ smurf::DynamicTransformation::DynamicTransformation(smurf::Frame* sourceFrame, s
 }
 
 smurf::DynamicTransformation::DynamicTransformation(const std::string &name, Frame *sourceFrame, Frame *targetFrame):
-    Transformation(sourceFrame, targetFrame), providerName(""), providerPortName("")
+    Transformation(name, sourceFrame, targetFrame), providerName(""), providerPortName("")
 {
 }
