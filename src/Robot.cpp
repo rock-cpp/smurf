@@ -176,7 +176,7 @@ void smurf::Robot::loadJoints()
                 StaticTransformation *transform = new StaticTransformation(prefix + joint->name, source, target,
                                                                            Eigen::Quaterniond(tr.rotation.w, tr.rotation.x, tr.rotation.y, tr.rotation.z),
                                                                            Eigen::Vector3d(tr.position.x, tr.position.y, tr.position.z));              
-                if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadJoint] Pushing back the statict transformation for the fixed joint" << joint->name;}
+                if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadJoint] Added the static transformation as the fixed joint " << transform->getName();}
                 staticTransforms.push_back(transform);
             }
             break;
@@ -190,7 +190,6 @@ void smurf::Robot::loadJoints()
                 } else
                     transform = new DynamicTransformation(prefix + joint->name, source, target);
 
-                dynamicTransforms.push_back(transform);
                 Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
                 Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
                 sourceToAxis.translation() = axis;
@@ -214,6 +213,8 @@ void smurf::Robot::loadJoints()
                 configmaps::ConfigMap joint_annotations = getJointConfigMap(joint);
                 smurfJoint->setParamFromConfigMap(joint_annotations);
 
+                if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadJoint] Added the floating joint " << smurfJoint->getName();}
+                dynamicTransforms.push_back(transform);
                 joints.push_back(smurfJoint);
             }
             break;
@@ -272,7 +273,7 @@ void smurf::Robot::loadJoints()
                 configmaps::ConfigMap joint_annotations = getJointConfigMap(joint);
                 smurfJoint->setParamFromConfigMap(joint_annotations);
 
-                if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadJoint] Pushing back the dynamic transformation for revolute or continuous joint" << joint->name;}
+                if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadJoint] Added the revolute/continuous/prismatic joint " << smurfJoint->getName();}
                 dynamicTransforms.push_back(transform);
                 joints.push_back(smurfJoint);
             }
