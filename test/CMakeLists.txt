@@ -8,6 +8,6 @@ rock_testsuite(test_suite
 
 target_link_libraries(test_suite ${Boost_LIBRARIES})
 
-add_subdirectory(sample_smurfs)
+#add_subdirectory(sample_smurfs)
 
 file(COPY sample_smurfs DESTINATION ./)
