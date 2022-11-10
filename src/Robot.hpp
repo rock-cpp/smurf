@@ -26,6 +26,8 @@ namespace smurf
         Robot();
         
         ~Robot();
+
+        std::string getModelName();
         
         const std::vector<smurf::StaticTransformation *> & getStaticTransforms() const
         {

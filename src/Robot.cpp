@@ -30,6 +30,13 @@ std::string checkGet(configmaps::ConfigMap &map, const std::string &key)
     return it->second;
 }
 
+std::string smurf::Robot::getModelName() 
+{
+    if (!(*smurfMap).hasKey("modelname"))
+        return "unknown model name";
+    else
+        return (*smurfMap)["modelname"];
+}
 
 // Private
 smurf::Frame* smurf::Robot::getFrameByName(const std::string& name)
