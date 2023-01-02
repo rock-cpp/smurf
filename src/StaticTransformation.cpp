@@ -1,13 +1,17 @@
 #include "StaticTransformation.hpp"
 
-smurf::StaticTransformation::StaticTransformation(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const Eigen::Affine3d& sourceToTarget): 
+smurf::StaticTransformation::StaticTransformation():
+    Transformation()
+{}
+
+smurf::StaticTransformation::StaticTransformation(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const Eigen::Affine3d& sourceToTarget):
     Transformation(sourceFrame, targetFrame)
     , sourceToTarget(sourceToTarget)
 {
 
 }
 
-smurf::StaticTransformation::StaticTransformation(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const Eigen::Quaterniond& rotation, const Eigen::Vector3d& translation): 
+smurf::StaticTransformation::StaticTransformation(smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const Eigen::Quaterniond& rotation, const Eigen::Vector3d& translation):
     Transformation(sourceFrame, targetFrame)
 {
     sourceToTarget.setIdentity();
@@ -16,13 +20,13 @@ smurf::StaticTransformation::StaticTransformation(smurf::Frame* sourceFrame, smu
 }
 
 
-smurf::StaticTransformation::StaticTransformation(const std::string &name, smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const Eigen::Affine3d& sourceToTarget): 
+smurf::StaticTransformation::StaticTransformation(const std::string &name, smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const Eigen::Affine3d& sourceToTarget):
     Transformation(name, sourceFrame, targetFrame), sourceToTarget(sourceToTarget)
 {
 
 }
 
-smurf::StaticTransformation::StaticTransformation(const std::string &name, smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const Eigen::Quaterniond& rotation, const Eigen::Vector3d& translation): 
+smurf::StaticTransformation::StaticTransformation(const std::string &name, smurf::Frame* sourceFrame, smurf::Frame* targetFrame, const Eigen::Quaterniond& rotation, const Eigen::Vector3d& translation):
     Transformation(name, sourceFrame, targetFrame)
 {
     sourceToTarget.setIdentity();

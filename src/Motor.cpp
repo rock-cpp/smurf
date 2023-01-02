@@ -1,5 +1,8 @@
 #include "Motor.hpp"
 
+smurf::Motor::Motor()
+{}
+
 smurf::Motor::Motor(configmaps::ConfigMap map)
 {
     motorMap = map;

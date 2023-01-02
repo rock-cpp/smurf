@@ -6,7 +6,7 @@
 
 
 namespace smurf{
-    
+
     class Inertial
     {
     public:
@@ -32,12 +32,19 @@ namespace smurf{
         {
             return this->name;
         };
+
+        /**Serializes the members of this class*/
+        template <typename Archive>
+        void serialize(Archive &ar, const unsigned int version)
+        {
+            throw std::runtime_error("Smurf::Inertial::serialize not implemented");
+        }
     private:
         urdf::Inertial inertial;
         int groupId;
         std::string name;
     };
-    
+
 };
 
 

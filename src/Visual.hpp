@@ -45,7 +45,7 @@ namespace smurf
 
         std::string name;
         urdf::GeometrySharedPtr geometry;
-        
+
 
         int groupId;
 
@@ -54,7 +54,7 @@ namespace smurf
         bool operator==(const Visual& other) const;
         bool operator!=(const Visual& other) const;
 
-        std::string getName() const 
+        std::string getName() const
         {
             return name;
         }
@@ -67,10 +67,10 @@ namespace smurf
 
         /**Serializes the members of this class*/
         template <typename Archive>
-            void serialize(Archive &ar, const unsigned int version)
-            {
-                throw std::runtime_error("Smurf::Visual::serialize not implemented");
-            }
+        void serialize(Archive &ar, const unsigned int version)
+        {
+            throw std::runtime_error("Smurf::Visual::serialize not implemented");
+        }
 
         private:
             smurf::Material material;

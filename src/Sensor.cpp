@@ -20,7 +20,7 @@ smurf::Sensor::Sensor(const std::string &name, const std::string &type, const st
     this->attachmentPoint=inFrame;
     this->map = sensorMap;
 }
-        
+
 std::string smurf::Sensor::getName() const
 {
     return this->name;
@@ -41,7 +41,7 @@ std::string smurf::Sensor::getTaskInstanceName()
     return this->taskInstanceName;
 }
 
-void smurf::Sensor::setJointName(std::string jointName) 
+void smurf::Sensor::setJointName(std::string jointName)
 {
     this->jointName = jointName;
 }
