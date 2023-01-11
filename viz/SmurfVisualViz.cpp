@@ -61,5 +61,3 @@ void SmurfVisualViz::updateDataIntern(smurf::Visual const& value)
     }
         
 }
-
-VizkitQtPlugin(SmurfVisualViz)

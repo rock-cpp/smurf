@@ -27,4 +27,6 @@ namespace vizkit3d
         struct Data;
         Data* p;
     };
+
+    VizkitQtPlugin(SmurfVisualViz)
 }

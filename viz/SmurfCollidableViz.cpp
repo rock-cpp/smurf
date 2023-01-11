@@ -55,5 +55,3 @@ void SmurfCollidableViz::updateDataIntern(smurf::Collidable const& value)
     }
         
 }
-
-VizkitQtPlugin(SmurfCollidableViz)
