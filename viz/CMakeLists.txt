@@ -3,14 +3,14 @@ pkg_check_modules(OSGVIZ osgViz)
 rock_find_qt5(Widgets Core Gui REQUIRED)
 
 if(OSGVIZ_FOUND)
-rock_vizkit_plugin(smurf-collidable-viz
+rock_vizkit_plugin(smurf_collidable-viz
     SmurfCollidableViz.cpp
     DEPS smurf
     DEPS_PKGCONFIG osgViz
     MOC SmurfCollidableViz.hpp
     HEADERS SmurfCollidableViz.hpp
-    LIBS Qt5::Core Qt::Gui)
-rock_vizkit_plugin(smurf-visual-viz
+    LIBS Qt5::Core Qt5::Gui)
+rock_vizkit_plugin(smurf_visual-viz
     SmurfVisualViz.cpp
     DEPS smurf
     DEPS_PKGCONFIG osgViz
