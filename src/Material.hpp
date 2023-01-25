@@ -31,6 +31,8 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 
+#include <configmaps/ConfigMap.hpp>
+
 namespace smurf
 {
 
@@ -46,20 +48,22 @@ namespace smurf
         bool operator==(const Material& other) const;
         bool operator!=(const Material& other) const;
 
+        configmaps::ConfigMap getConfigMap() const;
+
         void setName(std::string name);
         std::string getName() const;
 
         void setTextureFilename(std::string texture_filename);
-        std::string getTextureFilename() const;          
+        std::string getTextureFilename() const;
 
         void setAmbientColor(urdf::Color color);
-        urdf::Color getAmbientColor() const;        
+        urdf::Color getAmbientColor() const;
 
         void setDiffuseColor(urdf::Color color);
-        urdf::Color getDiffuseColor() const;     
+        urdf::Color getDiffuseColor() const;
 
         void setSpecularColor(urdf::Color color);
-        urdf::Color getSpecularColor() const; 
+        urdf::Color getSpecularColor() const;
 
         void setShininess(float shininess);
         float getShininess() const;
@@ -77,11 +81,11 @@ namespace smurf
         private:
             std::string name;
             std::string texture_filename;
-            
+
             urdf::Color ambientColor;
             urdf::Color diffuseColor;
             urdf::Color specularColor;
-            float shininess;            
+            float shininess;
     };
 }
 

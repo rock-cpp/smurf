@@ -66,7 +66,7 @@ void smurf::Material::setTextureFilename(std::string texture_filename) {
 
 std::string smurf::Material::getTextureFilename() const {
     return texture_filename;
-} 
+}
 
 void smurf::Material::setAmbientColor(urdf::Color color) {
     this->ambientColor = color;
@@ -98,6 +98,27 @@ void smurf::Material::setShininess(float shininess) {
 
 float smurf::Material::getShininess() const {
     return this->shininess;
+}
+
+configmaps::ConfigMap smurf::Material::getConfigMap() const
+{
+    configmaps::ConfigMap configMap;
+    configMap["name"] = name;
+    configMap["diffuseColor"]["r"] = diffuseColor.r;
+    configMap["diffuseColor"]["g"] = diffuseColor.g;
+    configMap["diffuseColor"]["b"] = diffuseColor.b;
+    configMap["diffuseColor"]["a"] = diffuseColor.a;
+    configMap["ambientColor"]["r"] = ambientColor.r;
+    configMap["ambientColor"]["g"] = ambientColor.g;
+    configMap["ambientColor"]["b"] = ambientColor.b;
+    configMap["ambientColor"]["a"] = ambientColor.a;
+    configMap["specularColor"]["r"] = specularColor.r;
+    configMap["specularColor"]["g"] = specularColor.g;
+    configMap["specularColor"]["b"] = specularColor.b;
+    configMap["specularColor"]["a"] = specularColor.a;
+    configMap["shininess"] = shininess;
+    configMap["texturename"] = texture_filename;
+    return configMap;
 }
 
 

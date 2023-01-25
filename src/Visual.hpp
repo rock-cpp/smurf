@@ -32,6 +32,7 @@
 #include <boost/serialization/export.hpp>
 
 #include "Material.hpp"
+#include "Geometry.hpp"
 namespace smurf
 {
 
@@ -42,14 +43,15 @@ namespace smurf
     {
         Visual();
         Visual(const urdf::Visual& urdfVisual);
+        Visual(configmaps::ConfigMap& configMap);
+
+        configmaps::ConfigMap getConfigMap() const;
 
         std::string name;
-        urdf::GeometrySharedPtr geometry;
-
+        std::shared_ptr<Geometry> geometry;
 
         int groupId;
-
-        urdf::Pose origin;
+        base::Pose origin;
 
         bool operator==(const Visual& other) const;
         bool operator!=(const Visual& other) const;

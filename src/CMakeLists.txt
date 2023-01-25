@@ -1,7 +1,7 @@
 find_package( Boost COMPONENTS filesystem)
 
 rock_library(smurf
-    SOURCES Robot.cpp 
+    SOURCES Robot.cpp
             Collidable.cpp
             DynamicTransformation.cpp
             Frame.cpp
@@ -30,14 +30,15 @@ rock_library(smurf
             Smurf.hpp
             Motor.hpp
             Material.hpp
+            Geometry.hpp
             Visual.hpp
     DEPS_PKGCONFIG
         base-types
         configmaps
         smurf_parser
         base-lib
-    DEPS_PLAIN 
-        Boost_FILESYSTEM 
+    DEPS_PLAIN
+        Boost_FILESYSTEM
 )
 
 FIND_PACKAGE( Boost COMPONENTS program_options filesystem REQUIRED )

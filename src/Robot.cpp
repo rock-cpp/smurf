@@ -374,10 +374,10 @@ void smurf::Robot::loadVisuals(std::string root_folder)
                     visual_smurf.setMaterial(material);
 
                     // set absolute path for mesh
-                    if (visual_smurf.geometry->type == urdf::Geometry::MESH)
+                    if (visual_smurf.geometry->getType() == Geometry::MESH)
                     {
-                        urdf::MeshSharedPtr mesh = urdf::dynamic_pointer_cast<urdf::Mesh>(visual_smurf.geometry);
-                        mesh->filename = root_folder + "/" + mesh->filename;
+                        std::shared_ptr<smurf::Mesh> mesh = std::dynamic_pointer_cast<smurf::Mesh>(visual_smurf.geometry);
+                        mesh->setFilename(std::string(root_folder + "/" + mesh->getFilename()));
                     }
                 }
             }

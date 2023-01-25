@@ -15,19 +15,19 @@ namespace vizkit3d
         public:
             SmurfVisual(const std::shared_ptr<smurf::Visual> visual)
             {
-                switch(visual->geometry->type)
+                switch(visual->geometry->getType())
                 {
-                    case urdf::Geometry::BOX:
+                    case smurf::Geometry::BOX:
                         addBox(visual);
                         break;
-                    case urdf::Geometry::CYLINDER:
+                    case smurf::Geometry::CYLINDER:
                         addCylinder(visual);
                         break;
-                    case urdf::Geometry::MESH:
+                    case smurf::Geometry::MESH:
                         addMesh(visual);
                         //             addMesh(visual, frameId, uuid);
                         break;
-                    case urdf::Geometry::SPHERE:
+                    case smurf::Geometry::SPHERE:
                         addSphere(visual);
                         break;
                     default:
@@ -36,10 +36,10 @@ namespace vizkit3d
             }
             void addMesh(const std::shared_ptr<smurf::Visual> visual)
             {
-                urdf::MeshSharedPtr mesh = urdf::dynamic_pointer_cast<urdf::Mesh>(visual->geometry);
+                std::shared_ptr<smurf::Mesh> mesh = std::dynamic_pointer_cast<smurf::Mesh>(visual->geometry);
                 assert(mesh.get() != nullptr);
-                std::cout << "MESH: " << mesh->filename << std::endl;
-                osg::Node* meshNode = osgDB::readNodeFile(mesh->filename);
+                std::cout << "MESH: " << mesh->getFilename() << std::endl;
+                osg::Node* meshNode = osgDB::readNodeFile(mesh->getFilename());
 
                 // TODO: move to SmurfVisual constructor, since this is generall functionality for all visuals
                 // TODO: add texture to the meshNode
@@ -79,22 +79,22 @@ namespace vizkit3d
             }
             void addCylinder(const std::shared_ptr<smurf::Visual> visual)
             {
-                urdf::CylinderSharedPtr urdfCylinder = urdf::dynamic_pointer_cast<urdf::Cylinder>(visual->geometry);
-                assert(urdfCylinder.get() != nullptr);
+                std::shared_ptr<smurf::Cylinder> cylinder = std::dynamic_pointer_cast<smurf::Cylinder>(visual->geometry);
+                assert(cylinder.get() != nullptr);
                 //x = length, y = radius, z = not used
-                osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0,0,0), urdfCylinder->radius, urdfCylinder->length);
-                osg::ShapeDrawable* cylinderDrawable = new osg::ShapeDrawable(cylinder);
+                osg::Cylinder* cylinderNode = new osg::Cylinder(osg::Vec3(0,0,0), cylinder->getRadius(), cylinder->getLength());
+                osg::ShapeDrawable* cylinderDrawable = new osg::ShapeDrawable(cylinderNode);
                 osg::Geode* geode = new osg::Geode();
                 geode->addDrawable(cylinderDrawable);
                 addChild(geode);
             }
             void addSphere(const std::shared_ptr<smurf::Visual> visual)
             {
-                urdf::SphereSharedPtr urdfSphere = urdf::dynamic_pointer_cast<urdf::Sphere>(visual->geometry);
-                assert(urdfSphere.get() != nullptr);
+                std::shared_ptr<smurf::Sphere> sphere = std::dynamic_pointer_cast<smurf::Sphere>(visual->geometry);
+                assert(sphere.get() != nullptr);
                 //x = length, y = radius, z = not used
-                osg::Sphere* sphere = new osg::Sphere(osg::Vec3(0,0,0), urdfSphere->radius);
-                osg::ShapeDrawable* sphereDrawable = new osg::ShapeDrawable(sphere);
+                osg::Sphere* sphereNode = new osg::Sphere(osg::Vec3(0,0,0), sphere->getRadius());
+                osg::ShapeDrawable* sphereDrawable = new osg::ShapeDrawable(sphereNode);
                 osg::Geode* geode = new osg::Geode();
                 geode->addDrawable(sphereDrawable);
                 addChild(geode);
