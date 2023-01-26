@@ -101,7 +101,7 @@ configmaps::ConfigMap smurf::Visual::getConfigMap() const
     configMap["rotation"]["z"] = origin.orientation.z();
 
     if (material == nullptr)
-        LOG_ERROR_S << "No material was set for the visual with the name " << name;
+        LOG_WARN_S << "No material was set for the visual with the name " << name;
     else
         configMap["material"] = material->getConfigMap();
 

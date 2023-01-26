@@ -342,9 +342,8 @@ void smurf::Robot::loadVisuals(std::string root_folder)
             smurf::Visual visual_smurf(*visual_urdf);
             for (configmaps::ConfigVector::iterator it = (*smurfMap)["materials"].begin(); it != (*smurfMap)["materials"].end(); ++it)
             {
-
                 configmaps::ConfigMap materialMap = *it;
-                if(materialMap["name"] == visual_smurf.material->name)
+                if(visual_smurf.material != nullptr && materialMap["name"].toString() == visual_smurf.material->name)
                 {
                     // diffuse color is set over urdf::Visual taken from urdf file
                     // but for some reason there is one more diffuce color in smurf materials file
@@ -359,14 +358,13 @@ void smurf::Robot::loadVisuals(std::string root_folder)
                     visual_smurf.material->ambientColor = smurf::Color(materialMap["ambientColor"][0]);
                     visual_smurf.material->specularColor = smurf::Color(materialMap["specularColor"][0]);
                     visual_smurf.material->shininess = materialMap["shininess"];
-
-                    // set absolute path for mesh
-                    if (visual_smurf.geometry->type == Geometry::MESH)
-                    {
-                        std::shared_ptr<smurf::Mesh> mesh = std::dynamic_pointer_cast<smurf::Mesh>(visual_smurf.geometry);
-                        mesh->filename = std::string(root_folder + "/" + mesh->filename);
-                    }
                 }
+            }
+            // set absolute path for mesh
+            if (visual_smurf.geometry->type == Geometry::MESH)
+            {
+                std::shared_ptr<smurf::Mesh> mesh = std::dynamic_pointer_cast<smurf::Mesh>(visual_smurf.geometry);
+                mesh->filename = std::string(root_folder + "/" + mesh->filename);
             }
             frame->addVisual(visual_smurf);
         }
