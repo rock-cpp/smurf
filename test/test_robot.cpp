@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(test_get_visuals)
         pFrame->getVisuals(visuals);
         for(const smurf::Visual& v : visuals)
         {
-            switch(v.geometry->getType())
+            switch(v.geometry->type)
             {
               case smurf::Geometry::SPHERE:
                // std::cout << "SPERE" << std::endl;
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(test_get_visuals)
               case smurf::Geometry::MESH:
               //  std::cout << "MESH" << std::endl;
                 smurf::Mesh* mesh = dynamic_cast<smurf::Mesh*>(v.geometry.get());
-                cout << mesh->getFilename() <<  endl;
+                cout << mesh->filename <<  endl;
                 break;
             }
         }

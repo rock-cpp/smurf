@@ -92,7 +92,7 @@ void smurf::Robot::loadCollidables()
         for(urdf::CollisionSharedPtr collision : link.second->collision_array)
         {
             // Find the correspondent collidable data if exists and create the collidable object
-            smurf::Collidable* collidable = new Collidable(collision->name, getContactParams(collision->name, link.first), *collision );
+            smurf::Collidable* collidable = new Collidable(*collision, getContactParams(collision->name, link.first));
             frame->addCollidable(*collidable);
         }
     }
@@ -344,8 +344,7 @@ void smurf::Robot::loadVisuals(std::string root_folder)
             {
 
                 configmaps::ConfigMap materialMap = *it;
-
-                if(materialMap["name"] == visual_smurf.getMaterial().getName())
+                if(materialMap["name"] == visual_smurf.material->name)
                 {
                     // diffuse color is set over urdf::Visual taken from urdf file
                     // but for some reason there is one more diffuce color in smurf materials file
@@ -353,31 +352,19 @@ void smurf::Robot::loadVisuals(std::string root_folder)
                     // TODO: add some check if diffuse color from smurf is the same as from urdf file
 
                     // we get material, since there are some value that was set over smurf::Visaul constructor
-                    smurf::Material material = visual_smurf.getMaterial();
 
-                    urdf::Color ambient_color;
-                    ambient_color.r = (double)materialMap["ambientColor"][0]["r"];
-                    ambient_color.g = (double)materialMap["ambientColor"][0]["g"];
-                    ambient_color.b = (double)materialMap["ambientColor"][0]["b"];
-                    ambient_color.a = 0.0; // for some reason there is no alpha channel in smurf colors
-                    material.setAmbientColor(ambient_color);
-
-                    urdf::Color specular_color;
-                    specular_color.r = (double)materialMap["specularColor"][0]["r"];
-                    specular_color.g = (double)materialMap["specularColor"][0]["g"];
-                    specular_color.b = (double)materialMap["specularColor"][0]["b"];
-                    specular_color.a = 0.0; // for some reason there is no alpha channel in smurf colors
-                    material.setSpecularColor(specular_color);
-
-                    material.setShininess((double)materialMap["shininess"]);
-
-                    visual_smurf.setMaterial(material);
+                    // TODO: are we sure that there is ambient, specularColor inside materialMap
+                    // TODO: is there several ambient color possible?
+                    // TODO: we can replace it by calling the visual_smurf.material = Material(configMap["material"])
+                    visual_smurf.material->ambientColor = smurf::Color(materialMap["ambientColor"][0]);
+                    visual_smurf.material->specularColor = smurf::Color(materialMap["specularColor"][0]);
+                    visual_smurf.material->shininess = materialMap["shininess"];
 
                     // set absolute path for mesh
-                    if (visual_smurf.geometry->getType() == Geometry::MESH)
+                    if (visual_smurf.geometry->type == Geometry::MESH)
                     {
                         std::shared_ptr<smurf::Mesh> mesh = std::dynamic_pointer_cast<smurf::Mesh>(visual_smurf.geometry);
-                        mesh->setFilename(std::string(root_folder + "/" + mesh->getFilename()));
+                        mesh->filename = std::string(root_folder + "/" + mesh->filename);
                     }
                 }
             }

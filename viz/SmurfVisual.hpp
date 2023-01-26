@@ -15,7 +15,7 @@ namespace vizkit3d
         public:
             SmurfVisual(const std::shared_ptr<smurf::Visual> visual)
             {
-                switch(visual->geometry->getType())
+                switch(visual->geometry->type)
                 {
                     case smurf::Geometry::BOX:
                         addBox(visual);
@@ -38,18 +38,17 @@ namespace vizkit3d
             {
                 std::shared_ptr<smurf::Mesh> mesh = std::dynamic_pointer_cast<smurf::Mesh>(visual->geometry);
                 assert(mesh.get() != nullptr);
-                std::cout << "MESH: " << mesh->getFilename() << std::endl;
-                osg::Node* meshNode = osgDB::readNodeFile(mesh->getFilename());
+                std::cout << "MESH: " << mesh->filename << std::endl;
+                osg::Node* meshNode = osgDB::readNodeFile(mesh->filename);
 
                 // TODO: move to SmurfVisual constructor, since this is generall functionality for all visuals
                 // TODO: add texture to the meshNode
 
                 // set Material
-                smurf::Material material = visual->getMaterial();
-                osg::Vec4 ambientColor = cvtOSGColor(material.getAmbientColor());
-                osg::Vec4 specularColor = cvtOSGColor(material.getSpecularColor());
-                osg::Vec4 diffuseColor = cvtOSGColor(material.getDiffuseColor());
-                float shininess = material.getShininess();
+                osg::Vec4 ambientColor = cvtOSGColor(visual->material->ambientColor);
+                osg::Vec4 specularColor = cvtOSGColor(visual->material->specularColor);
+                osg::Vec4 diffuseColor = cvtOSGColor(visual->material->diffuseColor);
+                float shininess = visual->material->shininess;
 
                 // TODO: taken from mars/graphics/osg_material_manager/OsgMaterial
                 osg::ref_ptr<osg::Material> osgMaterial = new osg::Material();;
@@ -66,10 +65,10 @@ namespace vizkit3d
             }
             void addBox(const std::shared_ptr<smurf::Visual> visual)
             {
-                urdf::BoxSharedPtr urdfBox = urdf::dynamic_pointer_cast<urdf::Box>(visual->geometry);
-                assert(urdfBox.get() != nullptr);
-                osg::Box* box = new osg::Box(osg::Vec3(0,0,0), urdfBox->dim.x, urdfBox->dim.y, urdfBox->dim.z);
-                osg::ShapeDrawable* boxDrawable = new osg::ShapeDrawable(box);
+                std::shared_ptr<smurf::Box> box = std::dynamic_pointer_cast<smurf::Box>(visual->geometry);
+                assert(box.get() != nullptr);
+                osg::Box* boxNode = new osg::Box(osg::Vec3(0,0,0), box->size.x(), box->size.y(), box->size.z());
+                osg::ShapeDrawable* boxDrawable = new osg::ShapeDrawable(boxNode);
                 osg::Geode* geode = new osg::Geode();
                 geode->addDrawable(boxDrawable);
                 addChild(geode);
@@ -82,7 +81,7 @@ namespace vizkit3d
                 std::shared_ptr<smurf::Cylinder> cylinder = std::dynamic_pointer_cast<smurf::Cylinder>(visual->geometry);
                 assert(cylinder.get() != nullptr);
                 //x = length, y = radius, z = not used
-                osg::Cylinder* cylinderNode = new osg::Cylinder(osg::Vec3(0,0,0), cylinder->getRadius(), cylinder->getLength());
+                osg::Cylinder* cylinderNode = new osg::Cylinder(osg::Vec3(0,0,0), cylinder->radius, cylinder->length);
                 osg::ShapeDrawable* cylinderDrawable = new osg::ShapeDrawable(cylinderNode);
                 osg::Geode* geode = new osg::Geode();
                 geode->addDrawable(cylinderDrawable);
@@ -93,14 +92,14 @@ namespace vizkit3d
                 std::shared_ptr<smurf::Sphere> sphere = std::dynamic_pointer_cast<smurf::Sphere>(visual->geometry);
                 assert(sphere.get() != nullptr);
                 //x = length, y = radius, z = not used
-                osg::Sphere* sphereNode = new osg::Sphere(osg::Vec3(0,0,0), sphere->getRadius());
+                osg::Sphere* sphereNode = new osg::Sphere(osg::Vec3(0,0,0), sphere->radius);
                 osg::ShapeDrawable* sphereDrawable = new osg::ShapeDrawable(sphereNode);
                 osg::Geode* geode = new osg::Geode();
                 geode->addDrawable(sphereDrawable);
                 addChild(geode);
             }
 
-            osg::Vec4 cvtOSGColor(urdf::Color color) {
+            osg::Vec4 cvtOSGColor(smurf::Color color) {
                 osg::Vec4 c(0, 0, 0, 1);
                 c[0] = color.r;
                 c[1] = color.g;

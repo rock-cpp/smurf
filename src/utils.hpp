@@ -24,48 +24,25 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef VISUAL_H
-#define VISUAL_H
-#include <urdf_model/types.h>
-#include <urdf_model/link.h>
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/export.hpp>
+#ifndef UTILS_HPP
+#define UTILS_HPP
 
-#include "Material.hpp"
 #include "Geometry.hpp"
+#include <configmaps/ConfigMap.hpp>
+#include <urdf_model/link.h>
+
 namespace smurf
 {
-
-    /**A replacement for urdf::Visual that hides the visual offset, because
-     * in envire the offset is encoded by the structure of the
-     * EnvireGraph*/
-    struct Visual
+    namespace utils
     {
-        Visual();
-        Visual(const urdf::Visual& urdfVisual);
-        Visual(configmaps::ConfigMap& configMap);
 
-        std::string name;
-        base::Pose origin;
-        std::shared_ptr<Geometry> geometry;
-        std::shared_ptr<Material> material;
-        int groupId;
+        base::Pose convertPose(const urdf::Pose &pose);
 
-        bool operator==(const Visual& other) const;
-        bool operator!=(const Visual& other) const;
+        smurf::Geometry* createGeometry(configmaps::ConfigMap &configMap);
 
-        configmaps::ConfigMap getConfigMap() const;
+        smurf::Geometry* createGeometry(urdf::GeometrySharedPtr urdfGeometry);
 
-        /**Grants access to boost serialization */
-        friend class boost::serialization::access;
-
-        /**Serializes the members of this class*/
-        template <typename Archive>
-        void serialize(Archive &ar, const unsigned int version)
-        {
-            throw std::runtime_error("Smurf::Visual::serialize not implemented");
-        }
-    };
+    }
 }
 
-#endif // VISUAL_H
+#endif // UTILS_HPP

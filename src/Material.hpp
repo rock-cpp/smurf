@@ -36,6 +36,22 @@
 namespace smurf
 {
 
+    struct Color
+    {
+        Color();
+        Color(const urdf::Color &color);
+        Color(configmaps::ConfigMap &configMap);
+
+        double r;
+        double g;
+        double b;
+        double a;
+
+        Color& operator=(const urdf::Color &color);
+
+        configmaps::ConfigMap getConfigMap() const;
+    };
+
     /**Extended verson of material.
      * The urdf::Material contains only name of material, texture_filename and diffuse color.
      * Therefore, smurf::Material extends the urdf::Material by ambientColor, specularColor and shininess
@@ -44,29 +60,20 @@ namespace smurf
     {
         Material();
         Material(urdf::MaterialSharedPtr material);
+        Material(configmaps::ConfigMap &configMap);
+
+        std::string name;
+        std::string textureFilename;
+
+        Color ambientColor;
+        Color diffuseColor;
+        Color specularColor;
+        double shininess;
 
         bool operator==(const Material& other) const;
         bool operator!=(const Material& other) const;
 
         configmaps::ConfigMap getConfigMap() const;
-
-        void setName(std::string name);
-        std::string getName() const;
-
-        void setTextureFilename(std::string texture_filename);
-        std::string getTextureFilename() const;
-
-        void setAmbientColor(urdf::Color color);
-        urdf::Color getAmbientColor() const;
-
-        void setDiffuseColor(urdf::Color color);
-        urdf::Color getDiffuseColor() const;
-
-        void setSpecularColor(urdf::Color color);
-        urdf::Color getSpecularColor() const;
-
-        void setShininess(float shininess);
-        float getShininess() const;
 
         /**Grants access to boost serialization */
         friend class boost::serialization::access;
@@ -77,15 +84,6 @@ namespace smurf
         {
             throw std::runtime_error("Smurf::Visual::serialize not implemented");
         }
-
-        private:
-            std::string name;
-            std::string texture_filename;
-
-            urdf::Color ambientColor;
-            urdf::Color diffuseColor;
-            urdf::Color specularColor;
-            float shininess;
     };
 }
 

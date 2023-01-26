@@ -26,99 +26,117 @@
 
 #include "Material.hpp"
 
-smurf::Material::Material()
-{}
+#include <base-logging/Logging.hpp>
+
+smurf::Color::Color() {}
+
+smurf::Color::Color(const urdf::Color &color) : r(color.r), g(color.g), b(color.b), a(color.a) {}
+
+smurf::Color::Color(configmaps::ConfigMap &configMap)
+{
+    if (!configMap.hasKey("r") || !configMap.hasKey("g") || !configMap.hasKey("b"))
+        LOG_ERROR_S << "The config map for color was set uncorrectly, check the keys.";
+    else {
+        r = configMap["r"];
+        g = configMap["g"];
+        b = configMap["b"];
+        if (!configMap.hasKey("a"))
+            a = 0.0;        // TODO: alpha 0 or 1.0
+        else
+            a = configMap["a"];
+    }
+}
+
+smurf::Color& smurf::Color::operator=(const urdf::Color &color)
+{
+    r = color.r;
+    g = color.g;
+    b = color.b;
+    a = color.a;
+    return *this;
+}
+
+configmaps::ConfigMap smurf::Color::getConfigMap() const
+{
+    configmaps::ConfigMap configMap;
+    configMap["r"] = r;
+    configMap["g"] = g;
+    configMap["b"] = b;
+    configMap["a"] = a;
+    return configMap;
+}
+
+smurf::Material::Material() {}
 
 smurf::Material::Material(urdf::MaterialSharedPtr material)
 {
     name = material->name;
-    texture_filename = material->texture_filename;
+    textureFilename = material->texture_filename;
     diffuseColor = material->color;
 }
 
-//TODO: add color comparison
-bool  smurf::Material::operator==(const smurf::Material& other) const
+smurf::Material::Material(configmaps::ConfigMap &configMap)
 {
-    return other.name == name &&
-           other.texture_filename == texture_filename;
-           /*other.ambientColor == ambientColor &&
-           other.diffuseColor == diffuseColor &&
-           other.specularColor == specularColor &&
-           other.shininess == shininess;*/
-}
+    //TODO: implement material from config map
+    name = "";
+    // TODO: check if config map contains the required parameter
+    if (!configMap.hasKey("name"))
+        LOG_ERROR_S << "There is no name key in the config map. The name will be empty.";
+    else
+        name = configMap["name"].toString();
 
-bool smurf::Material::operator!=(const smurf::Material& other) const
-{
-    return !operator==(other);
-}
+    if (!configMap.hasKey("diffuseColor"))
+        LOG_WARN_S << "There is no diffuse color in the config map for the material '" << name << "'";
+    else
+        diffuseColor = Color(configMap["diffuseColor"]);
 
-void smurf::Material::setName(std::string name) {
-    this->name = name;
-}
+    if (!configMap.hasKey("ambientColor"))
+        LOG_WARN_S << "There is no ambient color in the config map for the material '" << name << "'";
+    else
+        ambientColor = Color(configMap["ambientColor"]);
 
-std::string smurf::Material::getName() const {
-    return this->name;
-}
+    if (!configMap.hasKey("specularColor"))
+        LOG_WARN_S << "There is no specular color in the config map for the material '" << name << "'";
+    else
+        specularColor = Color(configMap["specularColor"]);
 
-void smurf::Material::setTextureFilename(std::string texture_filename) {
-    this->texture_filename = texture_filename;
-}
+    if (!configMap.hasKey("shininess"))
+        LOG_WARN_S << "There is no shininess in the config map for the material '" << name << "'";
+    else
+        shininess = configMap["shininess"];
 
-std::string smurf::Material::getTextureFilename() const {
-    return texture_filename;
-}
-
-void smurf::Material::setAmbientColor(urdf::Color color) {
-    this->ambientColor = color;
-}
-
-urdf::Color smurf::Material::getAmbientColor() const {
-    return this->ambientColor;
-}
-
-void smurf::Material::setDiffuseColor(urdf::Color color) {
-    this->diffuseColor = color;
-}
-
-urdf::Color smurf::Material::getDiffuseColor() const {
-    return this->diffuseColor;
-}
-
-void smurf::Material::setSpecularColor(urdf::Color color) {
-    this->specularColor = color;
-}
-
-urdf::Color smurf::Material::getSpecularColor() const {
-    return this->specularColor;
-}
-
-void smurf::Material::setShininess(float shininess) {
-    this->shininess = shininess;
-}
-
-float smurf::Material::getShininess() const {
-    return this->shininess;
+    // TODO: is it textureFilename or textureName
+    // what is stored here
+    if (!configMap.hasKey("texturename"))
+        LOG_WARN_S << "There is no texturename in the config map for the material '" << name << "'";
+    else
+        textureFilename = configMap["texturename"].toString();
 }
 
 configmaps::ConfigMap smurf::Material::getConfigMap() const
 {
     configmaps::ConfigMap configMap;
     configMap["name"] = name;
-    configMap["diffuseColor"]["r"] = diffuseColor.r;
-    configMap["diffuseColor"]["g"] = diffuseColor.g;
-    configMap["diffuseColor"]["b"] = diffuseColor.b;
-    configMap["diffuseColor"]["a"] = diffuseColor.a;
-    configMap["ambientColor"]["r"] = ambientColor.r;
-    configMap["ambientColor"]["g"] = ambientColor.g;
-    configMap["ambientColor"]["b"] = ambientColor.b;
-    configMap["ambientColor"]["a"] = ambientColor.a;
-    configMap["specularColor"]["r"] = specularColor.r;
-    configMap["specularColor"]["g"] = specularColor.g;
-    configMap["specularColor"]["b"] = specularColor.b;
-    configMap["specularColor"]["a"] = specularColor.a;
+    configMap["diffuseColor"] = diffuseColor.getConfigMap();
+    configMap["ambientColor"] = ambientColor.getConfigMap();
+    configMap["specularColor"] = specularColor.getConfigMap();
     configMap["shininess"] = shininess;
-    configMap["texturename"] = texture_filename;
+    configMap["texturename"] = textureFilename;
     return configMap;
 }
 
+// TODO: add color comparison
+bool smurf::Material::operator==(const smurf::Material &other) const
+{
+    return other.name == name &&
+           other.textureFilename == textureFilename;
+    /*other.ambientColor == ambientColor &&
+    other.diffuseColor == diffuseColor &&
+    other.specularColor == specularColor &&
+    other.shininess == shininess;*/
+}
 
+bool smurf::Material::operator!=(const smurf::Material &other) const
+{
+    return !operator==(other);
+}

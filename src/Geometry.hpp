@@ -30,17 +30,15 @@
 #include <algorithm>
 
 #include <base/Pose.hpp>
-
 #include <configmaps/ConfigMap.hpp>
-
-// TODO: replace origname in config map by geometrytype
+#include <urdf_model/link.h>
+#include <base-logging/Logging.hpp>
 
 namespace smurf
 {
-    class Geometry
+    struct Geometry
     {
-    public:
-        // TODO: do we need TERRAIN and HEIGHTMAP type?
+        // TODO: add TERRAIN and HEIGHTMAP type
         enum GeometryType
         {
             BOX,
@@ -52,11 +50,11 @@ namespace smurf
             UNKNOWN_TYPE
         };
 
+        GeometryType type;
+
         Geometry() : type(UNKNOWN_TYPE) {}
         Geometry(GeometryType type) : type(type) {}
         virtual ~Geometry(void) {}
-
-        GeometryType getType() const { return type; }
 
         virtual configmaps::ConfigMap getConfigMap() const
         {
@@ -107,27 +105,43 @@ namespace smurf
             }
         }
 
-    private:
-        GeometryType type;
+        bool isType(std::string geometryType) const
+        {
+            std::string typeString = toString(type);
+            std::transform(geometryType.begin(), geometryType.end(), geometryType.begin(), [](unsigned char c)
+                           { return std::tolower(c); });
+
+            if (typeString == geometryType)
+                return true;
+            else
+                return false;
+        }
     };
 
-    class Box : public Geometry
+    struct Box : public Geometry
     {
-    public:
         Box() : Box(base::Vector3d::Zero()) {}
         Box(base::Vector3d size) : Geometry(Geometry::BOX), size(size) {}
         Box(configmaps::ConfigMap &configMap) : Geometry(Geometry::BOX)
         {
-            if (configMap["origname"].toString() == "box")
+            if (configMap.hasKey("type") && isType(configMap["type"].toString()))
             {
-                size.x() = configMap["extend"]["x"];
-                size.y() = configMap["extend"]["y"];
-                size.z() = configMap["extend"]["z"];
+                if (configMap.hasKey("size") && configMap["size"].hasKey("x") && configMap["size"].hasKey("y") && configMap["size"].hasKey("z"))
+                {
+                    size.x() = configMap["size"]["x"];
+                    size.y() = configMap["size"]["y"];
+                    size.z() = configMap["size"]["z"];
+                }
+                else
+                {
+                    LOG_ERROR_S << "The config map has no or wrong structure of the key 'size'";
+                    size = base::Vector3d::Zero();
+                }
             }
             else
             {
+                LOG_ERROR_S << "The config map has no key 'type' or wrong type value";
                 size = base::Vector3d::Zero();
-                // TODO: show the warning
             }
         }
         Box(urdf::BoxSharedPtr urdfGeometry) : Geometry(Geometry::BOX)
@@ -144,78 +158,87 @@ namespace smurf
             }
         }
 
-        base::Vector3d getSize() const { return size; }
+        base::Vector3d size;
 
         configmaps::ConfigMap getConfigMap() const override
         {
             configmaps::ConfigMap configMap = Geometry::getConfigMap();
-            configMap["origname"] = "box";
-            configMap["extend"]["x"] = size.x();
-            configMap["extend"]["y"] = size.y();
-            configMap["extend"]["z"] = size.z();
+            configMap["type"] = toString(type);
+            configMap["size"]["x"] = size.x();
+            configMap["size"]["y"] = size.y();
+            configMap["size"]["z"] = size.z();
             return configMap;
         }
-
-    private:
-        base::Vector3d size;
     };
 
-    class Capsule : public Geometry
+    struct Capsule : public Geometry
     {
-    public:
         Capsule() : Capsule(0., 0.) {}
         Capsule(double radius, double length) : Geometry(Geometry::CAPSULE), radius(radius), length(length) {}
         Capsule(configmaps::ConfigMap &configMap) : Geometry(Geometry::CAPSULE)
         {
-            if (configMap["origname"] == "capsule")
+            if (configMap.hasKey("type") && isType(configMap["type"].toString()))
             {
-                radius = configMap["extend"]["x"];
-                length = configMap["extend"]["y"];
+                if (configMap.hasKey("radius") && configMap.hasKey("length"))
+                {
+                    radius = configMap["radius"];
+                    length = configMap["length"];
+                }
+                else
+                {
+                    LOG_ERROR_S << "The config map has no key 'radius' and/or 'length'";
+                    radius = 0.;
+                    length = 0.;
+                }
             }
             else
             {
+                LOG_ERROR_S << "The config map has no key 'type' or wrong type value";
                 radius = 0.;
                 length = 0.;
-                // TODO: show the warning
             }
         }
 
-        double getRadius() const { return radius; }
-        double getLength() const { return length; }
+        double radius;
+        double length;
 
         // TODO: is extend not mars specific config map parameter?
         // can we use radius and length?
         configmaps::ConfigMap getConfigMap() const override
         {
             configmaps::ConfigMap configMap = Geometry::getConfigMap();
-            configMap["origname"] = "capsule";
-            configMap["extend"]["x"] = radius;
-            configMap["extend"]["y"] = length;
+            configMap["type"] = toString(type);
+            configMap["radius"] = radius;
+            configMap["length"] = length;
             return configMap;
         }
-
-    private:
-        double radius;
-        double length;
     };
 
-    class Cylinder : public Geometry
+    struct Cylinder : public Geometry
     {
-    public:
         Cylinder() : Cylinder(0., 0.) {}
         Cylinder(double radius, double length) : Geometry(Geometry::CYLINDER), radius(radius), length(length) {}
         Cylinder(configmaps::ConfigMap &configMap) : Geometry(Geometry::CYLINDER)
         {
-            if (configMap["origname"] == "capsule")
+            if (configMap.hasKey("type") && isType(configMap["type"].toString()))
             {
-                radius = configMap["extend"]["x"];
-                length = configMap["extend"]["y"];
+                if (configMap.hasKey("radius") && configMap.hasKey("length"))
+                {
+                    radius = configMap["radius"];
+                    length = configMap["length"];
+                }
+                else
+                {
+                    LOG_ERROR_S << "The config map has no key 'radius' and/or 'length'";
+                    radius = 0.;
+                    length = 0.;
+                }
             }
             else
             {
+                LOG_ERROR_S << "The config map has no key 'type' or wrong type value";
                 radius = 0.;
                 length = 0.;
-                // TODO: show the warning
             }
         }
         Cylinder(urdf::CylinderSharedPtr urdfGeometry) : Geometry(Geometry::CYLINDER)
@@ -233,46 +256,51 @@ namespace smurf
             }
         }
 
-        double getRadius() const { return radius; }
-        double getLength() const { return length; }
+        double radius;
+        double length;
 
         // TODO: is extend not mars specific config map parameter?
         // can we use radius and length?
         configmaps::ConfigMap getConfigMap() const override
         {
             configmaps::ConfigMap configMap = Geometry::getConfigMap();
-            configMap["origname"] = "capsule";
-            configMap["extend"]["x"] = radius;
-            configMap["extend"]["y"] = length;
+            configMap["type"] = toString(type);
+            configMap["radius"] = radius;
+            configMap["lenght"] = length;
             return configMap;
         }
-
-    private:
-        double radius;
-        double length;
     };
 
-    class Mesh : public Geometry
+    struct Mesh : public Geometry
     {
-    public:
         Mesh() : Mesh(std::string()) {}
         Mesh(std::string filename) : Mesh(filename, base::Vector3d(1., 1., 1.)) {}
         Mesh(std::string filename, base::Vector3d scale) : Geometry(Geometry::MESH),
                                                            filename(filename), scale(scale) {}
         Mesh(configmaps::ConfigMap &configMap) : Geometry(Geometry::MESH)
         {
-            if (configMap["origname"] == "mesh")
+            if (configMap.hasKey("type") && isType(configMap["type"].toString()))
             {
-                filename = configMap["filename"].toString();
-                scale.x() = configMap["visualscale"]["x"];
-                scale.y() = configMap["visualscale"]["y"];
-                scale.z() = configMap["visualscale"]["z"];
+                if (configMap.hasKey("filename") && configMap.hasKey("scale") &&
+                    configMap["scale"].hasKey("x") && configMap["scale"].hasKey("y") && configMap["scale"].hasKey("z"))
+                {
+                    filename = configMap["filename"].toString();
+                    scale.x() = configMap["scale"]["x"];
+                    scale.y() = configMap["scale"]["y"];
+                    scale.z() = configMap["scale"]["z"];
+                }
+                else
+                {
+                    LOG_ERROR_S << "The config map has no key 'filename' and/or 'scale' or the key 'scale' has wrong structure";
+                    filename = std::string();
+                    scale = base::Vector3d::Zero();
+                }
             }
             else
             {
+                LOG_ERROR_S << "The config map has no key 'type' or wrong type value";
                 filename = std::string();
                 scale = base::Vector3d::Zero();
-                // TODO: show the warning
             }
         }
         Mesh(urdf::MeshSharedPtr urdfGeometry) : Geometry(Geometry::MESH)
@@ -292,9 +320,8 @@ namespace smurf
             }
         }
 
-        std::string getFilename() const { return filename; }
-        void setFilename(std::string filename) { this->filename = filename; }
-        base::Vector3d getScale() const { return scale; }
+        std::string filename;
+        base::Vector3d scale;
 
         // TODO: is extend not mars specific config map parameter?
         // can we use radius and length?
@@ -302,67 +329,74 @@ namespace smurf
         {
             configmaps::ConfigMap configMap = Geometry::getConfigMap();
             configMap["filename"] = filename;
-            configMap["origname"] = ""; // TODO: this is defined by mars, probably we dont need to set it
-            configMap["visualscale"]["x"] = scale.x();
-            configMap["visualscale"]["y"] = scale.y();
-            configMap["visualscale"]["z"] = scale.z();
+            configMap["type"] = toString(type);
+            configMap["scale"]["x"] = scale.x();
+            configMap["scale"]["y"] = scale.y();
+            configMap["scale"]["z"] = scale.z();
             return configMap;
         }
-
-    private:
-        std::string filename;
-        base::Vector3d scale;
     };
 
-    class Plane : public Geometry
+    struct Plane : public Geometry
     {
-    public:
         Plane() : Plane(base::Vector2d(0., 0.)) {}
         Plane(base::Vector2d size) : Geometry(Geometry::PLANE), size(size) {}
         Plane(configmaps::ConfigMap &configMap) : Geometry(Geometry::PLANE)
         {
-            if (configMap["origname"] == "plane")
+            if (configMap.hasKey("type") && isType(configMap["type"].toString()))
             {
-                size.x() = configMap["extend"]["x"];
-                size.y() = configMap["extend"]["y"];
+                if (configMap.hasKey("size") && configMap["size"].hasKey("x") && configMap["size"].hasKey("y"))
+                {
+                    size.x() = configMap["size"]["x"];
+                    size.y() = configMap["size"]["y"];
+                }
+                else
+                {
+                    LOG_ERROR_S << "The config map has no or wrong structure of the key 'size'";
+                    size = base::Vector2d::Zero();
+                }
             }
             else
             {
-                // TODO: show the warning
+                LOG_ERROR_S << "The config map has no key 'type' or wrong type value";
                 size = base::Vector2d::Zero();
             }
         }
 
-        base::Vector2d getSize() const { return size; }
+        base::Vector2d size;
 
         // TODO: is extend not mars specific config map parameter?
         // can we use radius and length?
         configmaps::ConfigMap getConfigMap() const override
         {
             configmaps::ConfigMap configMap = Geometry::getConfigMap();
-            configMap["origname"] = "plane";
-            configMap["extend"]["x"] = size.x();
-            configMap["extend"]["y"] = size.y();
+            configMap["type"] = toString(type);
+            configMap["size"]["x"] = size.x();
+            configMap["size"]["y"] = size.y();
 
             return configMap;
         }
-
-    private:
-        base::Vector2d size;
     };
 
-    class Sphere : public Geometry
+    struct Sphere : public Geometry
     {
-    public:
         Sphere() : Sphere(0.) {}
         Sphere(double radius) : Geometry(Geometry::SPHERE), radius(radius) {}
         Sphere(configmaps::ConfigMap &configMap) : Geometry(Geometry::SPHERE)
         {
-            if (configMap["origname"] == "sphere")
-                radius = configMap["extend"]["x"];
-            else
+            if (configMap.hasKey("type") && isType(configMap["type"].toString())) {
+                if (configMap.hasKey("radius"))
+                {
+                    radius = configMap["radius"];
+                }
+                else
+                {
+                    LOG_ERROR_S << "The config map has no key 'radius'";
+                    radius = 0.;
+                }
+            }else
             {
-                // TODO: show the warning
+                LOG_ERROR_S << "The config map has no key 'type' or wrong type value";
                 radius = 0.;
             }
         }
@@ -377,75 +411,17 @@ namespace smurf
             }
         }
 
-        double getRadius() const { return radius; }
+        double radius;
 
         // TODO: is extend not mars specific config map parameter?
         // can we use radius?
         configmaps::ConfigMap getConfigMap() const override
         {
             configmaps::ConfigMap configMap = Geometry::getConfigMap();
-            configMap["origname"] = "sphere";
-            configMap["extend"]["x"] = radius;
+            configMap["type"] = toString(type);
+            configMap["radius"] = radius;
             return configMap;
         }
-
-    private:
-        double radius;
     };
-
-    namespace utils
-    {
-        static smurf::Geometry* createGeometry(configmaps::ConfigMap &configMap)
-        {
-            std::string origname = configMap["origname"].toString();
-            if (origname == "box")
-                return new smurf::Box(configMap);
-            else if (origname == "capsule")
-                return new smurf::Capsule(configMap);
-            else if (origname == "cylinder")
-                return new smurf::Cylinder(configMap);
-            else if (origname == "mesh")
-                return new smurf::Mesh(configMap);
-            else if (origname == "plane")
-                return new smurf::Plane(configMap);
-            else if (origname == "sphere")
-                return new smurf::Sphere(configMap);
-            else
-                return new smurf::Geometry();
-        }
-
-        static smurf::Geometry* createGeometry(urdf::GeometrySharedPtr urdfGeometry)
-        {
-            switch (urdfGeometry->type)
-            {
-            case urdf::Geometry::BOX:
-            {
-                urdf::BoxSharedPtr box = urdf::dynamic_pointer_cast<urdf::Box>(urdfGeometry);
-                return new smurf::Box(box);
-            }
-            case urdf::Geometry::CYLINDER:
-            {
-                urdf::CylinderSharedPtr cylinder = urdf::dynamic_pointer_cast<urdf::Cylinder>(urdfGeometry);
-                return new smurf::Cylinder(cylinder);
-            }
-            case urdf::Geometry::MESH:
-            {
-                urdf::MeshSharedPtr mesh = urdf::dynamic_pointer_cast<urdf::Mesh>(urdfGeometry);
-                // TODO: check filename is alreade absolute
-                return new smurf::Mesh(mesh);
-            }
-            case urdf::Geometry::SPHERE:
-            {
-                urdf::SphereSharedPtr shpere = urdf::dynamic_pointer_cast<urdf::Sphere>(urdfGeometry);
-                // TODO: do we need assert here? like
-                return new smurf::Sphere(shpere);
-            }
-            default:
-            {
-                return new smurf::Geometry();
-            }
-            }
-        }
-    }
 }
 #endif // GEOMETRY_HPP

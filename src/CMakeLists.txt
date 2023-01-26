@@ -15,6 +15,7 @@ rock_library(smurf
             Motor.cpp
             Material.cpp
             Visual.cpp
+            utils.cpp
     HEADERS Robot.hpp
             Collidable.hpp
             ContactParams.hpp
@@ -32,6 +33,7 @@ rock_library(smurf
             Material.hpp
             Geometry.hpp
             Visual.hpp
+            utils.hpp
     DEPS_PKGCONFIG
         base-types
         configmaps
