@@ -180,11 +180,37 @@ void smurf::Robot::loadJoints()
           case urdf::Joint::FIXED:
             {
                 const urdf::Pose &tr(joint->parent_to_joint_origin_transform);
-                StaticTransformation *transform = new StaticTransformation(joint->name, source, target,
-                                                                           Eigen::Quaterniond(tr.rotation.w, tr.rotation.x, tr.rotation.y, tr.rotation.z),
-                                                                           Eigen::Vector3d(tr.position.x, tr.position.y, tr.position.z));
-                if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadJoint] Added the static transformation as the fixed joint " << transform->getName();}
-                staticTransforms.push_back(transform);
+                // StaticTransformation *transform = new StaticTransformation(joint->name, source, target,
+                //                                                            Eigen::Quaterniond(tr.rotation.w, tr.rotation.x, tr.rotation.y, tr.rotation.z),
+                //                                                            Eigen::Vector3d(tr.position.x, tr.position.y, tr.position.z));
+                // if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadJoint] Added the static transformation as the fixed joint " << transform->getName();}
+                Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
+                Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
+                sourceToAxis.translation() = axis;
+
+                const urdf::Pose parentToOrigin(joint->parent_to_joint_origin_transform);
+                Eigen::Quaterniond rot(parentToOrigin.rotation.w, parentToOrigin.rotation.x, parentToOrigin.rotation.y, parentToOrigin.rotation.z);
+                Eigen::Vector3d trans(parentToOrigin.position.x, parentToOrigin.position.y, parentToOrigin.position.z);
+                Eigen::Affine3d parentToOriginAff;
+                parentToOriginAff.setIdentity();
+                parentToOriginAff.rotate(rot);
+                parentToOriginAff.translation() = trans;
+                base::JointLimitRange limits;
+                //staticTransforms.push_back(transform);
+
+                Joint *smurfJoint = NULL;
+                if (useAnnotation) {
+                    configmaps::ConfigMap annotations = getAnnotations(joint);
+                    smurfJoint = new Joint (joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, parentToOriginAff, joint);
+                }
+                else
+                    smurfJoint = new Joint(joint->name, source, target, limits, sourceToAxis, parentToOriginAff, joint);
+                configmaps::ConfigMap joint_annotations = getJointConfigMap(joint);
+                smurfJoint->setParamFromConfigMap(joint_annotations);
+
+                if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadJoint] Added the fixed joint " << smurfJoint->getName();}
+                //dynamicTransforms.push_back(transform);
+                joints.push_back(smurfJoint);
             }
             break;
             case urdf::Joint::FLOATING:
