@@ -53,5 +53,8 @@ void SmurfCollidableViz::updateDataIntern(smurf::Collidable const& value)
     {
          p->data.reset(new smurf::Collidable(value));
     }
-        
+
 }
+#ifndef USE_QT5
+VizkitQtPlugin(SmurfCollidableViz)
+#endif

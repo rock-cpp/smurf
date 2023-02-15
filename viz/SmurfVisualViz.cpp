@@ -59,5 +59,8 @@ void SmurfVisualViz::updateDataIntern(smurf::Visual const& value)
     {
          p->data.reset(new smurf::Visual(value));
     }
-        
+
 }
+#ifndef USE_QT5
+VizkitQtPlugin(SmurfVisualViz)
+#endif

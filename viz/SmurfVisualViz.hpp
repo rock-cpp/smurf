@@ -22,11 +22,9 @@ namespace vizkit3d
         virtual osg::ref_ptr<osg::Node> createMainNode();
         virtual void updateMainNode(osg::Node* node);
         virtual void updateDataIntern(smurf::Visual const& Visual);
-        
+
     private:
         struct Data;
         Data* p;
     };
-
-    VizkitQtPlugin(SmurfVisualViz)
 }
