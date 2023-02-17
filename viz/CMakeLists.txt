@@ -1,6 +1,6 @@
 pkg_check_modules(OSGVIZ osgViz)
 
-if(${USE_QT5})
+if($ENV{USE_QT5})
     rock_find_qt5(Widgets Core Gui REQUIRED)
     set(QT_LIBS Qt5::Core Qt5::Gui)
 endif()
