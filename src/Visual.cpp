@@ -75,7 +75,7 @@ smurf::Visual::Visual(configmaps::ConfigMap &configMap)
                                                configMap["rotation"]["x"],
                                                configMap["rotation"]["y"],
                                                configMap["rotation"]["z"]);
-
+    map = configMap;
     geometry.reset(utils::createGeometry(configMap));
 
     // TODO: set material
@@ -85,11 +85,14 @@ smurf::Visual::Visual(configmaps::ConfigMap &configMap)
 configmaps::ConfigMap smurf::Visual::getConfigMap() const
 {
 
-    configmaps::ConfigMap configMap;
+    configmaps::ConfigMap configMap = map;
     if (geometry == nullptr)
         LOG_ERROR_S << "No geometry was set for the visual with the name " << name;
     else
-        configMap = geometry->getConfigMap();
+    {
+        configmaps::ConfigMap geomMap = geometry->getConfigMap();
+        configMap.updateMap(geomMap);
+    }
 
     configMap["name"] = name;
     configMap["position"]["x"] = origin.position.x();

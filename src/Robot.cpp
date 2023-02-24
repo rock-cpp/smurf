@@ -386,6 +386,22 @@ void smurf::Robot::loadVisuals(std::string root_folder)
                     visual_smurf.material->shininess = materialMap["shininess"];
                 }
             }
+            // check if we have additional visual information in smurfMap
+            if(smurfMap->hasKey("visuals"))
+            {
+                for(auto &it: (*smurfMap)["visuals"])
+                {
+                    if(it["name"] == visual_smurf.name)
+                    {
+                        visual_smurf.map = it;
+                    }
+                }
+            }
+            if(smurfMap->hasKey("loadPath"))
+            {
+                visual_smurf.map["filePrefix"] = (*smurfMap)["loadPath"];
+            }
+
             // set absolute path for mesh
             if (visual_smurf.geometry->type == Geometry::MESH)
             {
