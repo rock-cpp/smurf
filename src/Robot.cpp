@@ -384,6 +384,7 @@ void smurf::Robot::loadVisuals(std::string root_folder)
                     visual_smurf.material->ambientColor = smurf::Color(materialMap["ambientColor"][0]);
                     visual_smurf.material->specularColor = smurf::Color(materialMap["specularColor"][0]);
                     visual_smurf.material->shininess = materialMap["shininess"];
+                    visual_smurf.material->map = materialMap;
                 }
             }
             // check if we have additional visual information in smurfMap
@@ -400,6 +401,7 @@ void smurf::Robot::loadVisuals(std::string root_folder)
             if(smurfMap->hasKey("loadPath"))
             {
                 visual_smurf.map["filePrefix"] = (*smurfMap)["loadPath"];
+                visual_smurf.material->map["filePrefix"] = (*smurfMap)["loadPath"];
             }
 
             // set absolute path for mesh

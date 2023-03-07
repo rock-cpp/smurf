@@ -69,6 +69,7 @@ namespace smurf
         Color diffuseColor;
         Color specularColor;
         double shininess;
+        configmaps::ConfigMap map;
 
         bool operator==(const Material& other) const;
         bool operator!=(const Material& other) const;

@@ -49,8 +49,8 @@ namespace smurf
         base::Pose origin;
         std::shared_ptr<Geometry> geometry;
         std::shared_ptr<Material> material;
-        configmaps::ConfigMap map;
         int groupId;
+        configmaps::ConfigMap map;
 
         bool operator==(const Visual& other) const;
         bool operator!=(const Visual& other) const;

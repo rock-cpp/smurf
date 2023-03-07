@@ -66,7 +66,8 @@ configmaps::ConfigMap smurf::Color::getConfigMap() const
     return configMap;
 }
 
-smurf::Material::Material() {}
+smurf::Material::Material() {
+}
 
 smurf::Material::Material(urdf::MaterialSharedPtr material)
 {
@@ -77,6 +78,7 @@ smurf::Material::Material(urdf::MaterialSharedPtr material)
 
 smurf::Material::Material(configmaps::ConfigMap &configMap)
 {
+    map = configMap;
     //TODO: implement material from config map
     name = "";
     // TODO: check if config map contains the required parameter
@@ -115,7 +117,7 @@ smurf::Material::Material(configmaps::ConfigMap &configMap)
 
 configmaps::ConfigMap smurf::Material::getConfigMap() const
 {
-    configmaps::ConfigMap configMap;
+    configmaps::ConfigMap configMap = map;
     configMap["name"] = name;
     configMap["diffuseColor"] = diffuseColor.getConfigMap();
     configMap["ambientColor"] = ambientColor.getConfigMap();
