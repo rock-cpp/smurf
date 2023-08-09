@@ -28,5 +28,5 @@ namespace vizkit3d
         Data* p;
     };
 
-    VizkitQtPlugin(SmurfVisualViz)
+    VizkitQtPluginHeaderDecls(SmurfVisualViz)
 }

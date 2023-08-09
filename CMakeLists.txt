@@ -7,4 +7,5 @@ set(ROCK_TEST_ENABLED ON)
 SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++0x" )
 
 rock_init(smurf 0.1)
+rock_feature(NOCURDIR)
 rock_standard_layout()

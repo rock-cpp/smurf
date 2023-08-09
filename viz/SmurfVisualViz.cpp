@@ -61,3 +61,8 @@ void SmurfVisualViz::updateDataIntern(smurf::Visual const& value)
     }
         
 }
+
+namespace vizkit3d
+{
+    VizkitQtPluginImpl(SmurfVisualViz)
+}
