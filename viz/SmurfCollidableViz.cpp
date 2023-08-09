@@ -56,4 +56,7 @@ void SmurfCollidableViz::updateDataIntern(smurf::Collidable const& value)
         
 }
 
-VizkitQtPlugin(SmurfCollidableViz)
+namespace vizkit3d
+{
+    VizkitQtPluginImpl(SmurfCollidableViz)
+}
