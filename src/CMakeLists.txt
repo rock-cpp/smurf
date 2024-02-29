@@ -36,8 +36,8 @@ rock_library(smurf
         configmaps
         smurf_parser
         base-lib
-    DEPS_PLAIN 
-        Boost_FILESYSTEM 
+    DEPS
+        Boost::filesystem
 )
 
 FIND_PACKAGE( Boost COMPONENTS program_options filesystem REQUIRED )
