@@ -1,4 +1,4 @@
-find_package( Boost COMPONENTS filesystem)
+find_package( Boost COMPONENTS program_options filesystem REQUIRED)
 
 rock_library(smurf
     SOURCES Robot.cpp
@@ -41,10 +41,9 @@ rock_library(smurf
         base-lib
     DEPS_PLAIN
         Boost_FILESYSTEM
+        Boost_PROGRAM_OPTIONS
 )
 
-FIND_PACKAGE( Boost COMPONENTS program_options filesystem REQUIRED )
-INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 rock_executable(smurf_dump Main.cpp
     DEPS smurf)
