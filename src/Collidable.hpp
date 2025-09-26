@@ -4,40 +4,30 @@
 #include <string>
 #include <urdf_model/model.h>
 #include "ContactParams.hpp"
+#include "Geometry.hpp"
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 
 namespace smurf{
-    
-    class Collidable
+
+    struct Collidable
     {
-    public:
-        Collidable(){};
-        Collidable(const std::string& name, const ContactParams contact_params, const urdf::Collision& collision);
-        std::string getName() const 
-        { 
-            return this->name; 
-        }
-        urdf::Collision getCollision() const 
-        { 
-            return this->collision; 
-        }
-        void setGroupId(const int id) 
-        { 
-            this->groupId = id; 
-        }
-        int getGroupId() const 
-        { 
-            return this->groupId; 
-        }
-        ContactParams getContactParams() const
-        {
-            return this->contact_params;
-        }
+        Collidable();
+        Collidable(const urdf::Collision& collision, const ContactParams contactParams);
+        Collidable(configmaps::ConfigMap& configMap);
+
+        std::string name;
+        base::Pose origin;
+        std::shared_ptr<Geometry> geometry;
+        ContactParams contactParams;
+        // TODO: check where do we need groupId
+        int groupId;
 
         bool operator==(const Collidable& other) const;
         bool operator!=(const Collidable& other) const;
+
+        configmaps::ConfigMap getConfigMap() const;
 
         /**Grants access to boost serialization */
         friend class boost::serialization::access;
@@ -48,14 +38,8 @@ namespace smurf{
         {
             throw std::runtime_error("smurf::Collidable::serialize not implemented");
         }
-
-    private:
-        std::string name;
-        urdf::Collision collision;
-        int groupId;
-        ContactParams contact_params;
     };
-    
+
 };
 
 #endif // COLLIDABLE_H

@@ -1,7 +1,7 @@
-find_package( Boost COMPONENTS filesystem)
+find_package( Boost COMPONENTS program_options filesystem REQUIRED)
 
 rock_library(smurf
-    SOURCES Robot.cpp 
+    SOURCES Robot.cpp
             Collidable.cpp
             DynamicTransformation.cpp
             Frame.cpp
@@ -15,6 +15,7 @@ rock_library(smurf
             Motor.cpp
             Material.cpp
             Visual.cpp
+            utils.cpp
     HEADERS Robot.hpp
             Collidable.hpp
             ContactParams.hpp
@@ -30,18 +31,19 @@ rock_library(smurf
             Smurf.hpp
             Motor.hpp
             Material.hpp
+            Geometry.hpp
             Visual.hpp
+            utils.hpp
     DEPS_PKGCONFIG
         base-types
         configmaps
         smurf_parser
         base-lib
-    DEPS_PLAIN 
-        Boost_FILESYSTEM 
+    DEPS_PLAIN
+        Boost_FILESYSTEM
+        Boost_PROGRAM_OPTIONS
 )
 
-FIND_PACKAGE( Boost COMPONENTS program_options filesystem REQUIRED )
-INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 rock_executable(smurf_dump Main.cpp
     DEPS smurf)

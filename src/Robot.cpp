@@ -92,7 +92,7 @@ void smurf::Robot::loadCollidables()
         for(urdf::CollisionSharedPtr collision : link.second->collision_array)
         {
             // Find the correspondent collidable data if exists and create the collidable object
-            smurf::Collidable* collidable = new Collidable(collision->name, getContactParams(collision->name, link.first), *collision );
+            smurf::Collidable* collidable = new Collidable(*collision, getContactParams(collision->name, link.first));
             frame->addCollidable(*collidable);
         }
     }
@@ -180,11 +180,37 @@ void smurf::Robot::loadJoints()
           case urdf::Joint::FIXED:
             {
                 const urdf::Pose &tr(joint->parent_to_joint_origin_transform);
-                StaticTransformation *transform = new StaticTransformation(prefix + joint->name, source, target,
-                                                                           Eigen::Quaterniond(tr.rotation.w, tr.rotation.x, tr.rotation.y, tr.rotation.z),
-                                                                           Eigen::Vector3d(tr.position.x, tr.position.y, tr.position.z));
-                if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadJoint] Added the static transformation as the fixed joint " << transform->getName();}
-                staticTransforms.push_back(transform);
+                // StaticTransformation *transform = new StaticTransformation(joint->name, source, target,
+                //                                                            Eigen::Quaterniond(tr.rotation.w, tr.rotation.x, tr.rotation.y, tr.rotation.z),
+                //                                                            Eigen::Vector3d(tr.position.x, tr.position.y, tr.position.z));
+                // if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadJoint] Added the static transformation as the fixed joint " << transform->getName();}
+                Eigen::Vector3d axis(joint->axis.x, joint->axis.y, joint->axis.z);
+                Eigen::Affine3d sourceToAxis(Eigen::Affine3d::Identity());
+                sourceToAxis.translation() = axis;
+
+                const urdf::Pose parentToOrigin(joint->parent_to_joint_origin_transform);
+                Eigen::Quaterniond rot(parentToOrigin.rotation.w, parentToOrigin.rotation.x, parentToOrigin.rotation.y, parentToOrigin.rotation.z);
+                Eigen::Vector3d trans(parentToOrigin.position.x, parentToOrigin.position.y, parentToOrigin.position.z);
+                Eigen::Affine3d parentToOriginAff;
+                parentToOriginAff.setIdentity();
+                parentToOriginAff.rotate(rot);
+                parentToOriginAff.translation() = trans;
+                base::JointLimitRange limits;
+                //staticTransforms.push_back(transform);
+
+                Joint *smurfJoint = NULL;
+                if (useAnnotation) {
+                    configmaps::ConfigMap annotations = getAnnotations(joint);
+                    smurfJoint = new Joint (joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, parentToOriginAff, joint);
+                }
+                else
+                    smurfJoint = new Joint(joint->name, source, target, limits, sourceToAxis, parentToOriginAff, joint);
+                configmaps::ConfigMap joint_annotations = getJointConfigMap(joint);
+                smurfJoint->setParamFromConfigMap(joint_annotations);
+
+                if (debug) {LOG_DEBUG_S << "[smurf::Robot::loadJoint] Added the fixed joint " << smurfJoint->getName();}
+                //dynamicTransforms.push_back(transform);
+                joints.push_back(smurfJoint);
             }
             break;
             case urdf::Joint::FLOATING:
@@ -212,10 +238,10 @@ void smurf::Robot::loadJoints()
                 Joint *smurfJoint = NULL;
                 if (useAnnotation) {
                     configmaps::ConfigMap annotations = getAnnotations(joint);
-                    smurfJoint = new Joint (prefix + joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, parentToOriginAff, joint);
+                    smurfJoint = new Joint (joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, parentToOriginAff, joint);
                 }
                 else
-                    smurfJoint = new Joint(prefix + joint->name, source, target, limits, sourceToAxis, parentToOriginAff, joint);
+                    smurfJoint = new Joint(joint->name, source, target, limits, sourceToAxis, parentToOriginAff, joint);
 
                 configmaps::ConfigMap joint_annotations = getJointConfigMap(joint);
                 smurfJoint->setParamFromConfigMap(joint_annotations);
@@ -264,15 +290,15 @@ void smurf::Robot::loadJoints()
                 {
                     configmaps::ConfigMap annotations = getAnnotations(joint);
                     if(joint->type == urdf::Joint::REVOLUTE || joint->type == urdf::Joint::CONTINUOUS)
-                        transform = new RotationalJoint(prefix + joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
+                        transform = new RotationalJoint(joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
                     else
-                        transform = new TranslationalJoint(prefix + joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
+                        transform = new TranslationalJoint(joint->name, source, target, checkGet(annotations, "provider"), checkGet(annotations, "port"), checkGet(annotations, "driver"), limits, sourceToAxis, axis, parentToOriginAff, joint);
                 } else
                 {
                     if(joint->type == urdf::Joint::REVOLUTE || joint->type == urdf::Joint::CONTINUOUS)
-                        transform = new RotationalJoint(prefix + joint->name, source, target, limits, sourceToAxis, axis, parentToOriginAff, joint);
+                        transform = new RotationalJoint(joint->name, source, target, limits, sourceToAxis, axis, parentToOriginAff, joint);
                     else
-                        transform = new TranslationalJoint(prefix + joint->name, source, target, limits, sourceToAxis, axis, parentToOriginAff, joint);
+                        transform = new TranslationalJoint(joint->name, source, target, limits, sourceToAxis, axis, parentToOriginAff, joint);
                 }
 
                 smurfJoint = (Joint *)transform;
@@ -342,10 +368,8 @@ void smurf::Robot::loadVisuals(std::string root_folder)
             smurf::Visual visual_smurf(*visual_urdf);
             for (configmaps::ConfigVector::iterator it = (*smurfMap)["materials"].begin(); it != (*smurfMap)["materials"].end(); ++it)
             {
-
                 configmaps::ConfigMap materialMap = *it;
-
-                if(materialMap["name"] == visual_smurf.getMaterial().getName())
+                if(visual_smurf.material != nullptr && materialMap["name"].toString() == visual_smurf.material->name)
                 {
                     // diffuse color is set over urdf::Visual taken from urdf file
                     // but for some reason there is one more diffuce color in smurf materials file
@@ -353,33 +377,38 @@ void smurf::Robot::loadVisuals(std::string root_folder)
                     // TODO: add some check if diffuse color from smurf is the same as from urdf file
 
                     // we get material, since there are some value that was set over smurf::Visaul constructor
-                    smurf::Material material = visual_smurf.getMaterial();
 
-                    urdf::Color ambient_color;
-                    ambient_color.r = (double)materialMap["ambientColor"][0]["r"];
-                    ambient_color.g = (double)materialMap["ambientColor"][0]["g"];
-                    ambient_color.b = (double)materialMap["ambientColor"][0]["b"];
-                    ambient_color.a = 0.0; // for some reason there is no alpha channel in smurf colors
-                    material.setAmbientColor(ambient_color);
-
-                    urdf::Color specular_color;
-                    specular_color.r = (double)materialMap["specularColor"][0]["r"];
-                    specular_color.g = (double)materialMap["specularColor"][0]["g"];
-                    specular_color.b = (double)materialMap["specularColor"][0]["b"];
-                    specular_color.a = 0.0; // for some reason there is no alpha channel in smurf colors
-                    material.setSpecularColor(specular_color);
-
-                    material.setShininess((double)materialMap["shininess"]);
-
-                    visual_smurf.setMaterial(material);
-
-                    // set absolute path for mesh
-                    if (visual_smurf.geometry->type == urdf::Geometry::MESH)
+                    // TODO: are we sure that there is ambient, specularColor inside materialMap
+                    // TODO: is there several ambient color possible?
+                    // TODO: we can replace it by calling the visual_smurf.material = Material(configMap["material"])
+                    visual_smurf.material->ambientColor = smurf::Color(materialMap["ambientColor"][0]);
+                    visual_smurf.material->specularColor = smurf::Color(materialMap["specularColor"][0]);
+                    visual_smurf.material->shininess = materialMap["shininess"];
+                    visual_smurf.material->map = materialMap;
+                }
+            }
+            // check if we have additional visual information in smurfMap
+            if(smurfMap->hasKey("visuals"))
+            {
+                for(auto &it: (*smurfMap)["visuals"])
+                {
+                    if(it["name"] == visual_smurf.name)
                     {
-                        urdf::MeshSharedPtr mesh = urdf::dynamic_pointer_cast<urdf::Mesh>(visual_smurf.geometry);
-                        mesh->filename = root_folder + "/" + mesh->filename;
+                        visual_smurf.map = it;
                     }
                 }
+            }
+            if(smurfMap->hasKey("loadPath"))
+            {
+                visual_smurf.map["filePrefix"] = (*smurfMap)["loadPath"];
+                visual_smurf.material->map["filePrefix"] = (*smurfMap)["loadPath"];
+            }
+
+            // set absolute path for mesh
+            if (visual_smurf.geometry->type == Geometry::MESH)
+            {
+                std::shared_ptr<smurf::Mesh> mesh = std::dynamic_pointer_cast<smurf::Mesh>(visual_smurf.geometry);
+                mesh->filename = std::string(root_folder + "/" + mesh->filename);
             }
             frame->addVisual(visual_smurf);
         }

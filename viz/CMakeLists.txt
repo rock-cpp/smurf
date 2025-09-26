@@ -1,6 +1,6 @@
 pkg_check_modules(OSGVIZ osgViz)
 
-if(OSGVIZ_FOUND)
+if(OSGVIZ_PRIMITIVES_FOUND)
     rock_find_qt4(OPTIONAL)
     rock_find_qt5(OPTIONAL Widgets Core Gui)
 

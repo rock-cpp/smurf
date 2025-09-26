@@ -53,7 +53,7 @@ void SmurfCollidableViz::updateDataIntern(smurf::Collidable const& value)
     {
          p->data.reset(new smurf::Collidable(value));
     }
-        
+
 }
 
 namespace vizkit3d

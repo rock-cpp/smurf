@@ -59,7 +59,7 @@ void SmurfVisualViz::updateDataIntern(smurf::Visual const& value)
     {
          p->data.reset(new smurf::Visual(value));
     }
-        
+
 }
 
 namespace vizkit3d
