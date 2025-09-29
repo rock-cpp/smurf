@@ -61,6 +61,8 @@ void SmurfVisualViz::updateDataIntern(smurf::Visual const& value)
     }
 
 }
-#ifndef USE_QT5
-VizkitQtPlugin(SmurfVisualViz)
-#endif
+
+namespace vizkit3d
+{
+    VizkitQtPluginImpl(SmurfVisualViz)
+}

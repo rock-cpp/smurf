@@ -1,0 +1,12 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=@CMAKE_INSTALL_PREFIX@
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: smurf_visual-viz-qt5
+Description: vizKit plugin for smurf visuals
+Requires: smurf @PKGCONFIG_DEPS@
+Version: @PROJECT_VERSION@
+Libs: -L${libdir} -lsmurf_visual-viz-qt5
+Cflags: -I${includedir}
+

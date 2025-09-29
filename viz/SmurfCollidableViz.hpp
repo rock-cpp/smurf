@@ -27,7 +27,6 @@ namespace vizkit3d
         struct Data;
         Data* p;
     };
-#ifdef USE_QT5
-    VizkitQtPlugin(SmurfCollidableViz)
-#endif
+
+    VizkitQtPluginHeaderDecls(SmurfCollidableViz)
 }
